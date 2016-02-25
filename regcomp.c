@@ -14377,6 +14377,48 @@ S_handle_possible_posix(pTHX_ RExC_state_t *pRExC_state,
 }
 #undef ADD_POSIX_WARNING
 
+#ifdef DEBUGGING
+void
+S_dump_regex_set_stack(pTHX_ AV *stack, AV *fence_stack) {
+    int i; int f_last; int fi; int f;
+    int top_index = av_tindex(stack);
+
+#define IS_OPERATOR(a) SvIOK(a)
+
+    f_last = av_tindex(fence_stack);
+    fi = 0;
+    f = f_last >= fi ? SvUV(*av_fetch(fence_stack, fi, FALSE)) : -1;
+    for (i = 0; i <= top_index; ++i) {
+        SV **ssv = av_fetch(stack, i, FALSE);
+        const char *fstr = "  ";
+        if (f == i) {
+            fstr = "->";
+            ++fi;
+            f = f_last >= fi ? SvUV(*av_fetch(fence_stack, fi, FALSE)) : -1;
+        }
+        if (ssv) {
+            if (IS_OPERATOR(*ssv)) {
+                UV op = SvUV(*ssv);
+                PerlIO_printf(Perl_debug_log, "%s%d: operator %c [%02x]\n", fstr, i, (int)op, (unsigned)op);
+            }
+            else {
+                PerlIO_printf(Perl_debug_log, "%s%d: invlist\n", fstr, i);
+                Perl__invlist_dump(Perl_debug_log, 0, "      ", *ssv);
+            }
+        }
+        else {
+            PerlIO_printf(Perl_debug_log, "%s%d: NULL\n", fstr, i);
+        }
+    }
+    PerlIO_printf(Perl_debug_log, "  fence stack:");
+    for (fi = 0; fi <= f_last; ++fi)
+        PerlIO_printf(Perl_debug_log, " %d", (int)SvUV(*av_fetch(fence_stack, fi, FALSE)));
+    PerlIO_printf(Perl_debug_log, "\n");
+    
+#undef IS_OPERATOR
+}
+#endif
+
 STATIC unsigned  int
 S_regex_set_precedence(const U8 my_operator) {
 
@@ -14659,25 +14701,9 @@ redo_curchar:
         top_index = av_tindex(stack);
 
         DEBUG_rv(
-            int i;
             PerlIO_printf(Perl_debug_log, "regex_sets: curchar %c [%02x]\n",
                           curchar, (U8)curchar);
-            for (i = 0; i <= top_index; ++i) {
-                SV **ssv = av_fetch(stack, i, FALSE);
-                if (ssv) {
-                    if (IS_OPERATOR(*ssv)) {
-                        UV op = SvUV(*ssv);
-                        PerlIO_printf(Perl_debug_log, "  %d: operator %c [%02x]\n", i, (int)op, (unsigned)op);
-                    }
-                    else {
-                        PerlIO_printf(Perl_debug_log, "  %d: invlist\n", i);
-                        Perl__invlist_dump(Perl_debug_log, 0, "      ", *ssv);
-                    }
-                }
-                else {
-                    PerlIO_printf(Perl_debug_log, "  %d: NULL\n", i);
-                }
-            }
+            S_dump_regex_set_stack(aTHX_ stack, fence_stack);
         );
 
         switch (curchar) {
