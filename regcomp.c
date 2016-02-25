@@ -90,6 +90,10 @@ EXTERN_C const struct regexp_engine my_reg_engine;
 #include "invlist_inline.h"
 #include "unicode_constants.h"
 
+#  define DEBUG_rv_TEST_ (DEBUG_r_TEST_ && DEBUG_v_TEST_)
+#  define DEBUG_rv(a) DEBUG__(DEBUG_rv_TEST_, a)
+
+
 #define HAS_NONLATIN1_FOLD_CLOSURE(i) \
  _HAS_NONLATIN1_FOLD_CLOSURE_ONLY_FOR_USE_BY_REGCOMP_DOT_C_AND_REGEXEC_DOT_C(i)
 #define HAS_NONLATIN1_SIMPLE_FOLD_CLOSURE(i) \
@@ -14650,10 +14654,31 @@ S_handle_regex_sets(pTHX_ RExC_state_t *pRExC_state, SV** return_invlist,
         }
 
         curchar = UCHARAT(RExC_parse);
-
 redo_curchar:
 
         top_index = av_tindex(stack);
+
+        DEBUG_rv(
+            int i;
+            PerlIO_printf(Perl_debug_log, "regex_sets: curchar %c [%02x]\n",
+                          curchar, (U8)curchar);
+            for (i = 0; i <= top_index; ++i) {
+                SV **ssv = av_fetch(stack, i, FALSE);
+                if (ssv) {
+                    if (IS_OPERATOR(*ssv)) {
+                        UV op = SvUV(*ssv);
+                        PerlIO_printf(Perl_debug_log, "  %d: operator %c [%02x]\n", i, (int)op, (unsigned)op);
+                    }
+                    else {
+                        PerlIO_printf(Perl_debug_log, "  %d: invlist\n", i);
+                        Perl__invlist_dump(Perl_debug_log, 0, "      ", *ssv);
+                    }
+                }
+                else {
+                    PerlIO_printf(Perl_debug_log, "  %d: NULL\n", i);
+                }
+            }
+        );
 
         switch (curchar) {
             SV** stacked_ptr;       /* Ptr to something already on 'stack' */
