@@ -14378,7 +14378,8 @@ S_handle_possible_posix(pTHX_ RExC_state_t *pRExC_state,
 #undef ADD_POSIX_WARNING
 
 #ifdef DEBUGGING
-void
+
+STATIC void
 S_dump_regex_set_stack(pTHX_ AV *stack, AV *fence_stack) {
     int i; int f_last; int fi; int f;
     int top_index = av_tindex(stack);
@@ -14417,6 +14418,7 @@ S_dump_regex_set_stack(pTHX_ AV *stack, AV *fence_stack) {
     
 #undef IS_OPERATOR
 }
+
 #endif
 
 STATIC unsigned  int
@@ -14701,9 +14703,9 @@ redo_curchar:
         top_index = av_tindex(stack);
 
         DEBUG_rv(
+            S_dump_regex_set_stack(aTHX_ stack, fence_stack);
             PerlIO_printf(Perl_debug_log, "regex_sets: curchar %c [%02x]\n",
                           curchar, (U8)curchar);
-            S_dump_regex_set_stack(aTHX_ stack, fence_stack);
         );
 
         switch (curchar) {
@@ -14807,6 +14809,7 @@ redo_curchar:
                 /* Stack the position of this undealt-with left paren */
                 fence = top_index + 1;
                 av_push(fence_stack, newSViv(fence));
+                DEBUG_rv(PerlIO_printf(Perl_debug_log, "push fence %d\n", (int)fence));
                 break;
 
             case '\\':
@@ -14885,6 +14888,7 @@ redo_curchar:
                     RExC_parse++;
                     vFAIL("Unexpected ')'");
                 }
+                DEBUG_rv( PerlIO_printf(Perl_debug_log, "handling ')': top_index %d fence %d\n", (int)top_index, (int)fence) );
 
                  /* If at least two thing on the stack, treat this as an
                   * operator */
@@ -14903,6 +14907,7 @@ redo_curchar:
                 if (fence < 0) {
                     fence = 0;
                 }
+                DEBUG_rv( PerlIO_printf(Perl_debug_log, "handling ')': fence now %d\n", (int)fence) );
 
                 /* Having gotten rid of the fence, we pop the operand at the
                  * stack top and process it as a newly encountered operand */
@@ -14911,6 +14916,7 @@ redo_curchar:
                     goto handle_operand;
                 }
 
+                DEBUG_rv( PerlIO_printf(Perl_debug_log, "handling ')': fall through to bad syntax\n") );
                 RExC_parse++;
                 goto bad_syntax;
 
@@ -15077,13 +15083,16 @@ redo_curchar:
             top_index = av_tindex(stack);   /* Code above may have altered the
                                              * stack in the time since we
                                              * earlier set 'top_index'. */
+            DEBUG_rv( PerlIO_printf(Perl_debug_log, "regex_sets: handle_operand top_index %d fence %d\n", (int)top_index, (int)fence) );
             if (top_index - fence >= 0) {
                 /* If the top entry on the stack is an operator, it had better
                  * be a '!', otherwise the entry below the top operand should
                  * be an operator */
                 top_ptr = av_fetch(stack, top_index, FALSE);
+                sv_dump(*top_ptr);
                 assert(top_ptr);
                 if (IS_OPERATOR(*top_ptr)) {
+                    DEBUG_rv( PerlIO_printf(Perl_debug_log, "handle_operand: notting\n") );
 
                     /* The only permissible operator at the top of the stack is
                      * '!', which is applied immediately to this operand. */
@@ -15093,13 +15102,13 @@ redo_curchar:
                         vFAIL2("Unexpected binary operator '%c' with no "
                                 "preceding operand", curchar);
                     }
-
                     _invlist_invert(current);
 
                     only_to_avoid_leaks = av_pop(stack);
                     SvREFCNT_dec(only_to_avoid_leaks);
-                    top_index = av_tindex(stack);
+                    /*top_index = av_tindex(stack);*/
 
+                    /*DEBUG_rv( PerlIO_printf(Perl_debug_log, "regex_sets: top_index now %d\n", (int)top_index) );*/
                     /* And we redo with the inverted operand.  This allows
                      * handling multiple ! in a row */
                     goto handle_operand;
@@ -15113,11 +15122,13 @@ redo_curchar:
                                                            FALSE))
                                  || IS_OPERAND(*stacked_ptr))))
                 {
+                    DEBUG_rv( PerlIO_printf(Perl_debug_log, "handle_operand: operand without op\n") );
                     SvREFCNT_dec(current);
                     vFAIL("Operand with no preceding operator");
                 }
             }
 
+            DEBUG_rv( PerlIO_printf(Perl_debug_log, "handle_operand: fall through\n") );
             /* Here there was nothing on the stack or the top element was
              * another operand.  Just add this new one */
             av_push(stack, current);
