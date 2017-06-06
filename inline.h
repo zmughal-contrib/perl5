@@ -458,6 +458,7 @@ Perl_is_utf8_invariant_string_loc(const U8* const s, STRLEN len, const U8 ** ep)
 #ifndef EBCDIC
 
     /* Do the word-at-a-time iff there is at least one usable full word.  That
+     * XXX maybe if long enough to get meaningful gain
      * means that after advancing to a word boundary, there still is at least a
      * full word left.  The number of bytes needed to advance is 'wordsize -
      * offset' unless offset is 0. */
@@ -705,7 +706,8 @@ S_variant_under_utf8_count(const U8* const s, const U8* const e)
 
 #endif
 
-#ifndef PERL_IN_REGEXEC_C   /* Keep  these around for that file */
+   /* Keep  these around for these files */
+#if ! defined(PERL_IN_REGEXEC_C) && ! defined(PERL_IN_UTF8_C)
 #  undef PERL_WORDSIZE
 #  undef PERL_COUNT_MULTIPLIER
 #  undef PERL_WORD_BOUNDARY_MASK
