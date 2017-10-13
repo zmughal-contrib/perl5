@@ -2125,6 +2125,15 @@ PerlIOBase_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 		    goto get_cnt;
 	    }
 	    if (count > 0 && avail <= 0) {
+                if ((*f)->tab == &PerlIO_perlio && avail == 0 && count > 8192) {
+                    SSize_t direct = PerlIO_read(PerlIONext(f), buf, count);
+                    Perl_warn(aTHX_ "HERE %lu %l\n", count, direct);
+                    if (direct > 0) {
+                        count -= direct;
+                        buf += direct;
+                        return (buf - (STDCHAR *) vbuf);
+                    }
+                }
 		if (PerlIO_fill(f) != 0)
 		    break;
 	    }
