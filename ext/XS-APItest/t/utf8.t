@@ -123,6 +123,65 @@ for my $bit_pattern (1 .. (1 << $word_length) - 1) {
                         "$display_string contains $expected_count variants");
 }
 
+{
+    pass("The tests below are for utf8_length() with string"
+    . " starting at various bytes after a word boundary, denoted by 'o='");
+
+    # These are the boundaries of n and n+1 bytes needed to represent.
+    my @code_points = (utf8::unicode_to_native(0x7F),
+                                     isASCII ? 0x7FF : 0x3FF,
+                                     isASCII ? 0xFFFF: 0x3FFF,
+                                     isASCII ? 0x1FFFFF : 0x3FFFFF,
+                                     isASCII ? 0x7FFFFFFF : 0x3FFFFFF
+                     );
+    if ($word_length >= 8) {
+        no warnings qw(overflow portable);
+        push @code_points, (0xFFFFFFFFF, 0x7FFFFFFFFFFFFFFF);
+    }
+
+    # Test at each possible initial byte past a word boundary
+    for my $offset (0 .. $word_length - 1) {
+
+        # First test a single code point followed by an arbitrary letter, so
+        # the result should always be 2.  This makes sure that short strings
+        # work.
+        for my $code_point (@code_points) {
+            my $test_string = chr($code_point) . "A";
+            my $display_string = sprintf "\\x{%X}A", $code_point;
+            my $byte_length;
+            {
+                use bytes;
+                $byte_length = length $test_string;
+            }
+            is(test_utf8_length($test_string, $offset, $byte_length),
+            2, "$display_string; o=$offset");
+        }
+
+        # Then create a string consisting of all the code points catenated
+        # together.
+        my $test_string = join "", map { chr } @code_points;
+        my $byte_length;
+        {
+            use bytes;
+            $byte_length = length $test_string;
+        }
+
+        # Test the string rotated to every possible position.  This tests that
+        # chars represented by short UTF-8 vs long beginning and ending the
+        # string work.
+        for my $rotate (0 .. @code_points - 1) {
+            my $display_string = join "", map { sprintf "\\x{%X}", ord $_ } split "",  $test_string;
+            for my $offset (0 .. $word_length - 1) {
+                is(test_utf8_length($test_string, $offset, $byte_length),
+                length $test_string,
+                "$display_string; o=$offset");
+            }
+            $test_string .= substr $test_string, 0, 1;
+            substr($test_string, 0, 1) = "";
+        }
+    }
+}
+
 
 my $pound_sign = chr utf8::unicode_to_native(163);
 

@@ -6269,10 +6269,15 @@ test_variant_under_utf8_count(U8 *s, STRLEN offset, STRLEN len)
 
 STRLEN
 test_utf8_length(U8 *s, STRLEN offset, STRLEN len)
-CODE:
-    RETVAL = utf8_length(s + offset, s + len);
-OUTPUT:
-    RETVAL
+    PREINIT:
+        PERL_UINTMAX_T * copy;
+    CODE:
+        Newx(copy, 1 + ((len + WORDSIZE - 1) / WORDSIZE), PERL_UINTMAX_T);
+        Copy(s, (U8 *) copy + offset, len, U8);
+        RETVAL = utf8_length((U8 *) copy + offset, (U8 *) copy + offset + len);
+        Safefree(copy);
+    OUTPUT:
+        RETVAL
 
 AV *
 test_is_utf8_string_loc(char *s, STRLEN len)
