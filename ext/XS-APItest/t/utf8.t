@@ -16,6 +16,7 @@ $|=1;
 use XS::APItest;
 use Config;
 my $word_length = defined $Config{quadkind} ? 8 : 4;
+my $ivsize = $Config{ivsize};
 
 # Below we test some byte-oriented functions that look for UTF-8 variant bytes
 # and we know can work on full words at a time.  Hence this is not black box
@@ -134,7 +135,7 @@ for my $bit_pattern (1 .. (1 << $word_length) - 1) {
                                      isASCII ? 0x1FFFFF : 0x3FFFFF,
                                      isASCII ? 0x7FFFFFFF : 0x3FFFFFF
                      );
-    if ($word_length >= 8) {
+    if ($ivsize > 4) {
         no warnings qw(overflow portable);
         push @code_points, (0xFFFFFFFFF, 0x7FFFFFFFFFFFFFFF);
     }
@@ -146,15 +147,20 @@ for my $bit_pattern (1 .. (1 << $word_length) - 1) {
         # the result should always be 2.  This makes sure that short strings
         # work.
         for my $code_point (@code_points) {
-            my $test_string = chr($code_point) . "A";
-            my $display_string = sprintf "\\x{%X}A", $code_point;
+
+          # The point at which the code shifts to using per-word is fairly
+          # high.  Try with both small and larger lengths
+          for my $append ("A", "A" x 100) {
+            my $test_string = chr($code_point) . $append;
+            my $display_string = sprintf("\\x{%X}", $code_point) . $append;
             my $byte_length;
             {
                 use bytes;
                 $byte_length = length $test_string;
             }
             is(test_utf8_length($test_string, $offset, $byte_length),
-            2, "$display_string; o=$offset");
+            1 + length $append, "$display_string; o=$offset");
+          }
         }
 
         # Then create a string consisting of all the code points catenated

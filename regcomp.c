@@ -10678,7 +10678,7 @@ S_make_exactf_invlist(pTHX_ RExC_state_t *pRExC_state, regnode *node)
         }
     }
     else {  /* Pattern is UTF-8 */
-        U8 folded[UTF8_MAX_FOLD_CHAR_EXPAND * UTF8_MAXBYTES_CASE + 1] = { '\0' };
+        U8 folded[UTF8_MAXBYTES_CASE + 1] = { '\0' };
         const U8* e = s + bytelen;
         IV fc;
 
