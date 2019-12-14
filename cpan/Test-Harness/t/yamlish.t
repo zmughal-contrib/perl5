@@ -451,7 +451,7 @@ BEGIN {
             ],
             name => 'Regression: inline_nested_hash'
         },
-        {   name => "Unprintables",
+        {   name => "Unprintables", # THis is an ASCII centric test
             in   => [
                 "---",
                 "- \"\\z\\x01\\x02\\x03\\x04\\x05\\x06\\a\\x08\\t\\n\\v\\f\\r\\x0e\\x0f\"",

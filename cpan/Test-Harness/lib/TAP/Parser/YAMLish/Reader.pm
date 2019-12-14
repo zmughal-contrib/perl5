@@ -5,16 +5,16 @@ use warnings;
 
 use base 'TAP::Object';
 
-our $VERSION = '3.42';
+our $VERSION = '3.43';
 
 # TODO:
 #   Handle blessed object syntax
 
 # Printable characters for escapes
 my %UNESCAPES = (
-    z => "\x00", a => "\x07", t    => "\x09",
-    n => "\x0a", v => "\x0b", f    => "\x0c",
-    r => "\x0d", e => "\x1b", '\\' => '\\',
+    z => "\x00", a => "\a",  t    => "\t",
+    n => "\n",   v => "\cK", f    => "\f",
+    r => "\r",   e => "\e",  '\\' => '\\',
 );
 
 my $QQ_STRING    = qr{ " (?:\\. | [^"])* " }x;
@@ -269,7 +269,7 @@ TAP::Parser::YAMLish::Reader - Read YAMLish data from iterator
 
 =head1 VERSION
 
-Version 3.42
+Version 3.43
 
 =head1 SYNOPSIS
 
