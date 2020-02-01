@@ -1383,7 +1383,12 @@ sub run_report_and_exit {
     my $ret = run_with_options({setprgp => $options{setpgrp},
                                 timeout => $options{timeout},
                                }, @_);
-    $ret &= 0xff if $options{crash};
+print STDERR "XXX: <$ret>\n";
+#$ret &= 0xff if $options{crash};
+    if ($options{crash}) {
+        $ret &= 0xff;
+print STDERR "YYY: (crash option true): <$ret>\n";
+    }
     report_and_exit(!$ret, 'zero exit from', 'non-zero exit from', "@_");
 }
 

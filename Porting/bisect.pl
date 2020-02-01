@@ -228,6 +228,14 @@ if ($git_version ge v1.6.6) {
 }
 
 # Sanity check the first and last revisions:
+#####
+for my $arg (@ARGV) {
+    print STDERR "AAA: <$arg>\n";
+}
+my %argv = map { $_ => 1 } @ARGV;
+my $opposite = $argv{'--expect-fail'} ? 1 : 0;
+
+#####
 system "git checkout $end" and die;
 my $ret = system $^X, $runner, @ARGV;
 die "Runner returned $ret for end revision" unless $ret;
@@ -237,7 +245,11 @@ die "Runner returned $ret for end revision, which is a skip"
 if (defined $start) {
     system "git checkout $start" and die;
     my $ret = system $^X, $runner, @ARGV;
-    die "Runner returned $ret, not 0 for start revision" if $ret;
+    #die "Runner returned $ret, not 0 for start revision" if $ret;
+#####
+print STDERR "SSS: (ret inside defined start): <$ret>\n";
+    die "Runner returned $ret, not 0 for start revision" if ($ret and !$opposite);
+#####
 } else {
     # Try to find the earliest version for which the test works
     my @tried;
