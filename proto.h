@@ -5856,38 +5856,30 @@ STATIC void	S_set_regex_pv(pTHX_ RExC_state_t *pRExC_state, REGEXP *Rx);
 STATIC void	S_skip_to_be_ignored_text(pTHX_ RExC_state_t *pRExC_state, char ** p, const bool force_to_xmod);
 #define PERL_ARGS_ASSERT_SKIP_TO_BE_IGNORED_TEXT	\
 	assert(pRExC_state); assert(p)
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE void	S_ssc_add_range(pTHX_ regnode_ssc *ssc, UV const start, UV const end);
+STATIC void	S_ssc_add_range(pTHX_ regnode_ssc *ssc, UV const start, UV const end);
 #define PERL_ARGS_ASSERT_SSC_ADD_RANGE	\
 	assert(ssc)
-#endif
 STATIC void	S_ssc_and(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc, const regnode_charclass *and_with);
 #define PERL_ARGS_ASSERT_SSC_AND	\
 	assert(pRExC_state); assert(ssc); assert(and_with)
 STATIC void	S_ssc_anything(pTHX_ regnode_ssc *ssc);
 #define PERL_ARGS_ASSERT_SSC_ANYTHING	\
 	assert(ssc)
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE void	S_ssc_clear_locale(regnode_ssc *ssc);
+STATIC void	S_ssc_clear_locale(regnode_ssc *ssc);
 #define PERL_ARGS_ASSERT_SSC_CLEAR_LOCALE	\
 	assert(ssc)
-#endif
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE void	S_ssc_cp_and(pTHX_ regnode_ssc *ssc, UV const cp);
+STATIC void	S_ssc_cp_and(pTHX_ regnode_ssc *ssc, UV const cp);
 #define PERL_ARGS_ASSERT_SSC_CP_AND	\
 	assert(ssc)
-#endif
 STATIC void	S_ssc_finalize(pTHX_ RExC_state_t *pRExC_state, regnode_ssc *ssc);
 #define PERL_ARGS_ASSERT_SSC_FINALIZE	\
 	assert(pRExC_state); assert(ssc)
 STATIC void	S_ssc_init(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc);
 #define PERL_ARGS_ASSERT_SSC_INIT	\
 	assert(pRExC_state); assert(ssc)
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE void	S_ssc_intersection(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert_2nd);
+STATIC void	S_ssc_intersection(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert_2nd);
 #define PERL_ARGS_ASSERT_SSC_INTERSECTION	\
 	assert(ssc); assert(invlist)
-#endif
 STATIC int	S_ssc_is_anything(const regnode_ssc *ssc)
 			__attribute__warn_unused_result__;
 #define PERL_ARGS_ASSERT_SSC_IS_ANYTHING	\
@@ -5901,11 +5893,9 @@ STATIC int	S_ssc_is_cp_posixl_init(const RExC_state_t *pRExC_state, const regnod
 STATIC void	S_ssc_or(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc, const regnode_charclass *or_with);
 #define PERL_ARGS_ASSERT_SSC_OR	\
 	assert(pRExC_state); assert(ssc); assert(or_with)
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE void	S_ssc_union(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert_2nd);
+STATIC void	S_ssc_union(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert_2nd);
 #define PERL_ARGS_ASSERT_SSC_UNION	\
 	assert(ssc); assert(invlist)
-#endif
 STATIC SSize_t	S_study_chunk(pTHX_ RExC_state_t *pRExC_state, regnode **scanp, SSize_t *minlenp, SSize_t *deltap, regnode *last, struct scan_data_t *data, I32 stopparen, U32 recursed_depth, regnode_ssc *and_withp, U32 flags, U32 depth);
 #define PERL_ARGS_ASSERT_STUDY_CHUNK	\
 	assert(pRExC_state); assert(scanp); assert(minlenp); assert(deltap); assert(last)

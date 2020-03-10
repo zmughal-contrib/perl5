@@ -2069,7 +2069,7 @@ S_ssc_or(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc,
               );
 }
 
-PERL_STATIC_INLINE void
+STATIC void
 S_ssc_union(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert2nd)
 {
     PERL_ARGS_ASSERT_SSC_UNION;
@@ -2082,7 +2082,7 @@ S_ssc_union(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert2nd)
                                         &ssc->invlist);
 }
 
-PERL_STATIC_INLINE void
+STATIC void
 S_ssc_intersection(pTHX_ regnode_ssc *ssc,
                          SV* const invlist,
                          const bool invert2nd)
@@ -2097,7 +2097,7 @@ S_ssc_intersection(pTHX_ regnode_ssc *ssc,
                                                &ssc->invlist);
 }
 
-PERL_STATIC_INLINE void
+STATIC void
 S_ssc_add_range(pTHX_ regnode_ssc *ssc, const UV start, const UV end)
 {
     PERL_ARGS_ASSERT_SSC_ADD_RANGE;
@@ -2107,7 +2107,7 @@ S_ssc_add_range(pTHX_ regnode_ssc *ssc, const UV start, const UV end)
     ssc->invlist = _add_range_to_invlist(ssc->invlist, start, end);
 }
 
-PERL_STATIC_INLINE void
+STATIC void
 S_ssc_cp_and(pTHX_ regnode_ssc *ssc, const UV cp)
 {
     /* AND just the single code point 'cp' into the SSC 'ssc' */
@@ -2125,7 +2125,7 @@ S_ssc_cp_and(pTHX_ regnode_ssc *ssc, const UV cp)
     SvREFCNT_dec_NN(cp_list);
 }
 
-PERL_STATIC_INLINE void
+STATIC void
 S_ssc_clear_locale(regnode_ssc *ssc)
 {
     /* Set the SSC 'ssc' to not match any locale things */
