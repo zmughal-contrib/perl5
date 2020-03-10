@@ -1948,7 +1948,7 @@ ES	|I32	|execute_wildcard|NN REGEXP * const prog|NN char* stringarg \
 				|SSize_t minend |NN SV* screamer|U32 nosave
 ES	|void|add_above_Latin1_folds|NN RExC_state_t *pRExC_state|const U8 cp \
 				|NN SV** invlist
-Ei	|regnode_offset|handle_named_backref|NN RExC_state_t *pRExC_state   \
+ES	|regnode_offset|handle_named_backref|NN RExC_state_t *pRExC_state   \
 				|NN I32 *flagp				    \
 				|NN char * parse_start			    \
 				|char ch
@@ -1989,7 +1989,7 @@ ES	|U32	|join_exact	|NN RExC_state_t *pRExC_state \
 				|NN regnode *scan|NN UV *min_subtract  \
 				|NN bool *unfolded_multi_char          \
 				|U32 flags|NULLOK regnode *val|U32 depth
-EiT	|U8   |compute_EXACTish|NN RExC_state_t *pRExC_state
+EST	|U8   |compute_EXACTish|NN RExC_state_t *pRExC_state
 ES	|void	|nextchar	|NN RExC_state_t *pRExC_state
 ES	|void	|skip_to_be_ignored_text|NN RExC_state_t *pRExC_state  \
 				|NN char ** p			    \

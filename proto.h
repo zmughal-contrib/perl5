@@ -5682,11 +5682,9 @@ STATIC REGEXP*	S_compile_wildcard(pTHX_ const char * subpattern, const STRLEN le
 #define PERL_ARGS_ASSERT_COMPILE_WILDCARD	\
 	assert(subpattern)
 
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE U8	S_compute_EXACTish(RExC_state_t *pRExC_state);
+STATIC U8	S_compute_EXACTish(RExC_state_t *pRExC_state);
 #define PERL_ARGS_ASSERT_COMPUTE_EXACTISH	\
 	assert(pRExC_state)
-#endif
 STATIC regnode *	S_construct_ahocorasick_from_trie(pTHX_ RExC_state_t *pRExC_state, regnode *source, U32 depth);
 #define PERL_ARGS_ASSERT_CONSTRUCT_AHOCORASICK_FROM_TRIE	\
 	assert(pRExC_state); assert(source)
@@ -5714,11 +5712,9 @@ STATIC SV*	S_get_ANYOF_cp_list_for_ssc(pTHX_ const RExC_state_t *pRExC_state, co
 STATIC bool	S_grok_bslash_N(pTHX_ RExC_state_t *pRExC_state, regnode_offset* nodep, UV *code_point_p, int* cp_count, I32 *flagp, const bool strict, const U32 depth);
 #define PERL_ARGS_ASSERT_GROK_BSLASH_N	\
 	assert(pRExC_state); assert(flagp)
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE regnode_offset	S_handle_named_backref(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, char * parse_start, char ch);
+STATIC regnode_offset	S_handle_named_backref(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, char * parse_start, char ch);
 #define PERL_ARGS_ASSERT_HANDLE_NAMED_BACKREF	\
 	assert(pRExC_state); assert(flagp); assert(parse_start)
-#endif
 STATIC int	S_handle_possible_posix(pTHX_ RExC_state_t *pRExC_state, const char* const s, char ** updated_parse_ptr, AV** posix_warnings, const bool check_only);
 #define PERL_ARGS_ASSERT_HANDLE_POSSIBLE_POSIX	\
 	assert(pRExC_state); assert(s)

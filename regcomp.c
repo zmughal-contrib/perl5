@@ -11049,7 +11049,7 @@ S_parse_lparen_question_flags(pTHX_ RExC_state_t *pRExC_state)
 #define REGTAIL_STUDY(x,y,z) regtail((x),(y),(z),depth+1)
 #endif
 
-PERL_STATIC_INLINE regnode_offset
+STATIC regnode_offset
 S_handle_named_backref(pTHX_ RExC_state_t *pRExC_state,
                              I32 *flagp,
                              char * parse_start,
@@ -13248,7 +13248,7 @@ S_grok_bslash_N(pTHX_ RExC_state_t *pRExC_state,
 }
 
 
-PERL_STATIC_INLINE U8
+STATIC U8
 S_compute_EXACTish(RExC_state_t *pRExC_state)
 {
     U8 op;
