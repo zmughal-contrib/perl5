@@ -4948,10 +4948,8 @@ PERL_CALLCONV void	Perl_hv_kill_backrefs(pTHX_ HV *hv);
 STATIC bool	S_find_default_stash(pTHX_ HV **stash, const char *name, STRLEN len, const U32 is_utf8, const I32 add, const svtype sv_type);
 #define PERL_ARGS_ASSERT_FIND_DEFAULT_STASH	\
 	assert(stash); assert(name)
-#ifndef PERL_NO_INLINE_FUNCTIONS
-PERL_STATIC_INLINE GV*	S_gv_fetchmeth_internal(pTHX_ HV* stash, SV* meth, const char* name, STRLEN len, I32 level, U32 flags);
+STATIC GV*	S_gv_fetchmeth_internal(pTHX_ HV* stash, SV* meth, const char* name, STRLEN len, I32 level, U32 flags);
 #define PERL_ARGS_ASSERT_GV_FETCHMETH_INTERNAL
-#endif
 STATIC void	S_gv_init_svtype(pTHX_ GV *gv, const svtype sv_type);
 #define PERL_ARGS_ASSERT_GV_INIT_SVTYPE	\
 	assert(gv)

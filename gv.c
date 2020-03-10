@@ -703,7 +703,7 @@ obtained from the GV with the C<GvCV> macro.
 
 /* NOTE: No support for tied ISA */
 
-PERL_STATIC_INLINE GV*
+STATIC GV*
 S_gv_fetchmeth_internal(pTHX_ HV* stash, SV* meth, const char* name, STRLEN len, I32 level, U32 flags)
 {
     GV** gvp;
