@@ -24,6 +24,7 @@ if ($^O eq 'VMS') {
     }
 }
 
+use Errno;
 
 # suppress VMS whinging about bad execs.
 use vmsish qw(hushed);
@@ -111,9 +112,9 @@ unless( ok($rc == 255 << 8 or $rc == -1 or $rc == 256 or $rc == 512) ) {
     print "# \$rc == $rc\n";
 }
 
-unless ( ok( $! == 2  or  $! =~ /\bno\b.*\bfile/i or  
-             $! == 13 or  $! =~ /permission denied/i or
-             $! == 22 or  $! =~ /invalid argument/i  ) ) {
+unless ( ok( $! == Errno::ENOENT or $! =~ /\bno\b.*\bfile/i or
+             $! == Errno::EACCES or $! =~ /permission denied/i or
+             $! == Errno::EINVAL or $! =~ /invalid argument/i  ) ) {
     diag sprintf "\$! eq %d, '%s'\n", $!, $!;
 }
 
@@ -180,7 +181,7 @@ TODO: {
 {
     local $! = 0;
     ok !exec(), 'empty exec LIST fails';
-    ok $! == 2 || $! =~ qr/\bno\b.*\bfile\b/i, 'errno = ENOENT'
+    ok $! == Errno::ENOENT || $! =~ qr/\bno\b.*\bfile\b/i, 'errno = ENOENT'
         or diag sprintf "\$! eq %d, '%s'\n", $!, $!;
 
 }
@@ -188,7 +189,7 @@ TODO: {
     local $! = 0;
     my $err = $!;
     ok !(exec {""} ()), 'empty exec PROGRAM LIST fails';
-    ok $! == 2 || $! =~ qr/\bno\b.*\bfile\b/i, 'errno = ENOENT'
+    ok $! == Errno::ENOENT || $! =~ qr/\bno\b.*\bfile\b/i, 'errno = ENOENT'
         or diag sprintf "\$! eq %d, '%s'\n", $!, $!;
 }
 
