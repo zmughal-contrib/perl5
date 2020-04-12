@@ -4,6 +4,7 @@ use 5.008001;
 
 use strict;
 use warnings;
+use Test::More tests => 20;
 
 BEGIN {
     if (!eval { require Socket }) {
@@ -15,7 +16,6 @@ BEGIN {
 }
 
 use Cwd;
-print "1..20\n";
 
 # for testing _readrc
 $ENV{HOME} = Cwd::cwd();
@@ -35,9 +35,6 @@ my @stat;
 
 # for testing _readrc
 $INC{'FileHandle.pm'} = 1;
-
-(my $libnet_t = __FILE__) =~ s/\w+.t$/libnet_t.pl/;
-require $libnet_t;
 
 # now that the tricks are out of the way...
 eval { require Net::Netrc; };

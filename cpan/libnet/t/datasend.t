@@ -4,6 +4,7 @@ use 5.008001;
 
 use strict;
 use warnings;
+use Test::More tests => 54;
 
 BEGIN {
     if (!eval { require Socket }) {
@@ -40,11 +41,6 @@ BEGIN {
     return Net::Cmd::CMD_OK;
   }
 }
-
-(my $libnet_t = __FILE__) =~ s/datasend.t/libnet_t.pl/;
-require $libnet_t or die;
-
-print "1..54\n";
 
 sub check {
   my $expect = pop;

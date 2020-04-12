@@ -4,6 +4,7 @@ use 5.008001;
 
 use strict;
 use warnings;
+use Test::More tests => 10;
 
 BEGIN {
     if (!eval { require Socket }) {
@@ -46,12 +47,6 @@ sub inet_ntoa {
 }
 
 package main;
-
-
-(my $libnet_t = __FILE__) =~ s/config.t/libnet_t.pl/;
-require $libnet_t;
-
-print "1..10\n";
 
 use Net::Config;
 ok( exists $INC{'Net/Config.pm'}, 'Net::Config should have been used' );
