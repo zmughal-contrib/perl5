@@ -7,14 +7,11 @@ use warnings;
 use Test::More tests => 10;
 
 BEGIN {
-    if (!eval { require Socket }) {
-        print "1..0 # no Socket\n"; exit 0;
-    }
+    plan skip_all => "no Socket" if ! eval { require Socket };
     undef *{Socket::inet_aton};
     undef *{Socket::inet_ntoa};
-    if (ord('A') == 193 && !eval { require Convert::EBCDIC }) {
-        print "1..0 # EBCDIC but no Convert::EBCDIC\n"; exit 0;
-    }
+    plan skip_all => "EBCDIC but no Convert::EBCDIC"
+        if (ord('A') == 193 && !eval { require Convert::EBCDIC });
     $INC{'Socket.pm'} = 1;
 }
 
