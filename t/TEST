@@ -77,12 +77,11 @@ my %temp_no_core = (
     );
 
 # temporary workaround Apr 2017.  These need '.' in @INC.
-# Ideally this # list will eventually be empty
+# Ideally this # list will eventually be empty. (cpan/Test-Simple fixed)
 
 my %temp_needs_dot  = map { $_ => 1 } qw(
     ../cpan/Filter-Util-Call
     ../cpan/libnet
-    ../cpan/Test-Simple
 );
 
 
