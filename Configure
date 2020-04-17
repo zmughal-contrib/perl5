@@ -16481,8 +16481,13 @@ define:define:?*)
 	ivsize=8
 	uvsize=8
 	;;
-*)	ivtype="long"
-	uvtype="unsigned long"
+*)	if test $intsize -eq $longsize; then
+            ivtype="int"
+            uvtype="unsigned int"
+        else 
+            ivtype="long"
+            uvtype="unsigned long"
+        fi
 	ivsize=$longsize
 	uvsize=$longsize
 	;;
@@ -16609,17 +16614,17 @@ case "$i16type" in
 esac
 
 case "$i32type" in
-'')	case "$longsize" in
-	4)	i32type=long
-		u32type="unsigned long"
-		i32size=$longsize
-		u32size=$longsize
+'')	case "$intsize" in
+	4)	i32type=int
+		u32type="unsigned int"
+		i32size=$intsize
+		u32size=$intsize
 		;;
-	*)	case "$intsize" in
-		4)	i32type=int
-			u32type="unsigned int"
-			i32size=$intsize
-			u32size=$intsize
+	*)	case "$longsize" in
+		4)	i32type=long
+			u32type="unsigned long"
+			i32size=$longsize
+			u32size=$longsize
 			;;
 		esac
 		;;
@@ -21284,19 +21289,19 @@ if $test X"$ivsize" = X8; then
 	uvxformat="$sPRIx64"
 	uvXUformat="$sPRIXU64"
 else
-	if $test X"$ivsize" = X"$longsize"; then
-		ivdformat='"ld"'
-		uvuformat='"lu"'
-		uvoformat='"lo"'
-		uvxformat='"lx"'
-		uvXUformat='"lX"'
+        if $test X"$ivsize" = X"$intsize"; then
+                ivdformat='"d"'
+                uvuformat='"u"'
+                uvoformat='"o"'
+                uvxformat='"x"'
+                uvXUformat='"X"'
 	else
-		if $test X"$ivsize" = X"$intsize"; then
-			ivdformat='"d"'
-			uvuformat='"u"'
-			uvoformat='"o"'
-			uvxformat='"x"'
-			uvXUformat='"X"'
+                if $test X"$ivsize" = X"$longsize"; then
+                        ivdformat='"ld"'
+                        uvuformat='"lu"'
+                        uvoformat='"lo"'
+                        uvxformat='"lx"'
+                        uvXUformat='"lX"'
 		else
 			: far out
 			if $test X"$ivsize" = X"$shortsize"; then

@@ -124,7 +124,7 @@ if ($opt{uselargefiles} eq 'define') {
 }
 else {
     $opt{lseeksize} = 4;
-    $opt{lseektype} = 'long';
+    $opt{lseektype} = 'int';
 }
 
 # set 64-bit options
@@ -175,9 +175,9 @@ if ($opt{use64bitint} eq 'define') {
 }
 else {
     $opt{d_nv_preserves_uv} = 'define';
-    $opt{ivdformat} = '"ld"';
+    $opt{ivdformat} = '"d"';
     $opt{ivsize} = 4;
-    $opt{ivtype} = 'long';
+    $opt{ivtype} = 'int';
     $opt{nv_preserves_uv_bits} = 32;
     $opt{sPRIXU64} = '"lX"';
     $opt{sPRId64} = '"ld"';
@@ -186,11 +186,11 @@ else {
     $opt{sPRIu64} = '"lu"';
     $opt{sPRIx64} = '"lx"';
     $opt{uvXUformat} = '"lX"';
-    $opt{uvoformat} = '"lo"';
+    $opt{uvoformat} = '"o"';
     $opt{uvsize} = 4;
-    $opt{uvtype} = 'unsigned long';
-    $opt{uvuformat} = '"lu"';
-    $opt{uvxformat} = '"lx"';
+    $opt{uvtype} = 'unsigned int';
+    $opt{uvuformat} = '"u"';
+    $opt{uvxformat} = '"x"';
 }
 
 unless ($opt{cc} =~ /\bcl/) {

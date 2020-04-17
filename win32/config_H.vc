@@ -3937,14 +3937,14 @@
  *	This symbol, if defined, indicates that a variable of type NVTYPE
  *	stores 0.0 in memory as all bits zero.
  */
-#define	IVTYPE		long		/**/
-#define	UVTYPE		unsigned long		/**/
+#define	IVTYPE		int		/**/
+#define	UVTYPE		unsigned int		/**/
 #define	I8TYPE		char		/**/
 #define	U8TYPE		unsigned char		/**/
 #define	I16TYPE		short	/**/
 #define	U16TYPE		unsigned short	/**/
-#define	I32TYPE		long	/**/
-#define	U32TYPE		unsigned long	/**/
+#define	I32TYPE		int	/**/
+#define	U32TYPE		unsigned int	/**/
 #ifdef HAS_QUAD
 #define	I64TYPE		__int64	/**/
 #define	U64TYPE		unsigned __int64	/**/
