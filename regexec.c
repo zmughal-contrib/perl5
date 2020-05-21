@@ -2839,6 +2839,21 @@ S_find_byclass(pTHX_ regexp * prog, const regnode *c, char *s,
                         to_complement ^ cBOOL(_generic_isCC_A(*s, FLAGS(c))));
         break;
 
+    case NPOSIXA1R:
+        to_complement = 1;
+        /* FALLTHROUGH */
+
+    case POSIXA1R:
+        if (utf8_target) {
+            REXEC_FBC_CLASS_SCAN(1, to_complement ^ withinCOUNT(POSIXA1Rmasked(c, *s),
+                                                                POSIXA1Rbase(c), POSIXA1Rdelta(c)));
+        }
+        else {
+            REXEC_FBC_CLASS_SCAN(0, to_complement ^ withinCOUNT(POSIXA1Rmasked(c, *s),
+                                                                POSIXA1Rbase(c), POSIXA1Rdelta(c)));
+        }
+        break;
+
     case NPOSIXU:
         to_complement = 1;
         /* FALLTHROUGH */
@@ -7069,6 +7084,23 @@ S_regmatch(pTHX_ regmatch_info *reginfo, char *startpos, regnode *prog)
             locinput++;
             break;
 
+        case NPOSIXA1R:
+            to_complement = 1;
+            /* FALLTHROUGH */
+
+        case POSIXA1R:
+            if (     NEXTCHR_IS_EOS
+                ||   locinput >= loceol
+                || ! to_complement ^ withinCOUNT(POSIXA1Rmasked(scan, nextchr),
+                                                 POSIXA1Rbase(scan),
+                                                 POSIXA1Rdelta(scan)))
+            {
+                sayNO;
+            }
+
+            locinput++;
+            break;
+
         case NPOSIXU:   /* \W or [:^punct:] etc. under /u */
             to_complement = 1;
             /* FALLTHROUGH */
@@ -9917,6 +9949,43 @@ S_regrepeat(pTHX_ regexp *prog, char **startposp, const regnode *p,
 	    scan++;
 	}
 	break;
+
+    case POSIXA1R:
+        if (utf8_target && this_eol - scan > max) {
+
+            /* We didn't adjust <this_eol> at the beginning of this routine
+             * because is UTF-8, but it is actually ok to do so, since here, to
+             * XXX do this on new nodes) match, 1 char == 1 byte. */
+            this_eol = scan + max;
+        }
+        while (   scan < this_eol
+               && withinCOUNT(POSIXA1Rmasked(p, *scan),
+                              POSIXA1Rbase(p), POSIXA1Rdelta(p)))
+        {
+	    scan++;
+	}
+        break;
+
+    case NPOSIXA1R:
+        if (! utf8_target) {
+            while (     scan < this_eol
+                   && ! withinCOUNT(POSIXA1Rmasked(p, *scan),
+                                    POSIXA1Rbase(p), POSIXA1Rdelta(p)))
+            {
+                scan++;
+            }
+        }
+        else {
+	    while (     hardcount < max
+                   &&   scan < this_eol
+                   && ! withinCOUNT(POSIXA1Rmasked(p, *scan),
+                                    POSIXA1Rbase(p), POSIXA1Rdelta(p)))
+            {
+                scan += UTF8SKIP(scan);
+		hardcount++;
+	    }
+        }
+        break;
 
     case NPOSIXD:
         if (utf8_target) {

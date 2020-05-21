@@ -6069,6 +6069,23 @@ Perl_re_printf( aTHX_  "LHS=%" UVuf " RHS=%" UVuf "\n",
                     my_invlist = invlist_clone(PL_Posix_ptrs[FLAGS(scan)], NULL);
                     goto join_posix_and_ascii;
 
+                case NPOSIXA1R:
+                    invert = 1;
+                    /* FALLTHROUGH */
+                case POSIXA1R:
+                    if (POSIXA1Rmasked(scan, 'a') == 'A') {
+                        my_invlist = _add_range_to_invlist(NULL, 'A', 'Z');
+                        my_invlist = _add_range_to_invlist(my_invlist, 'a',
+                                                                       'z');
+                    }
+                    else {
+                        my_invlist = _add_range_to_invlist(NULL,
+                                                           POSIXA1Rbase(scan),
+                                                           POSIXA1Rbase(scan)
+                                                         + POSIXA1Rdelta(scan));
+                    }
+                    goto join_posix_and_ascii;
+
 		case NPOSIXD:
 		case NPOSIXU:
                     invert = 1;
@@ -19807,11 +19824,44 @@ S_optimize_regclass(pTHX_
                                    try_inverted))
                     {
                         /* Here, they precisely match.  Optimize this ANYOF
-                         * node into its equivalent POSIX one of the correct
-                         * type, possibly inverted */
-                        op = (try_inverted)
-                              ? type + NPOSIXA - POSIXA
-                              : type;
+                         * node. */
+
+                        if (   single_range
+                            || (lowest_cp == 'A' && highest_cp == 'z'))
+                        {
+                            posix_class = 0;
+
+                            if (single_range) {
+                                posix_class |= POSIXA1R_ALPHA_BIT;
+                            }
+
+                            if (lowest_cp % 2) {
+                                posix_class |= POSIXA1R_1x_BIT;
+                            }
+
+                            posix_class |= NATIVE_TO_LATIN1(lowest_cp) / 16;
+
+                            if (highest_cp != '9') {
+                                posix_class |= POSIXA1R_16L_BIT;
+                                if (highest_cp == '~') {
+                                    posix_class |= POSIXA1R_68L_BIT;
+                                    if (lowest_cp == ' ') {
+                                        posix_class |= POSIXA1R_1L_BIT;
+                                    }
+                                }
+                            }
+
+                            op = POSIXA1R + try_inverted;
+                        }
+                        else {
+
+
+                        /* into its equivalent POSIX one of the correct * type, possibly inverted */
+                            op = (try_inverted)
+                                ? type + NPOSIXA - POSIXA
+                                : type;
+                        }
+
                         *ret = reg_node(pRExC_state, op);
                         FLAGS(REGNODE_p(*ret)) = posix_class;
                         SvREFCNT_dec(d_invlist);
@@ -21473,8 +21523,33 @@ Perl_regprop(pTHX_ const regexp *prog, SV *sv, const regnode *o, const regmatch_
 
         SvREFCNT_dec(cp_list);
     }
-    else if (k == POSIXD || k == NPOSIXD) {
-        U8 index = FLAGS(o) * 2;
+    else if (k == POSIXD || k == NPOSIXD || k == POSIXA1R) {
+        U8 index;
+
+        if (k == POSIXA1R) {
+            if (POSIXA1Rmasked(o, 'a') == 'A') {
+                index = _CC_ALPHA * 2;
+            }
+            else if (POSIXA1Rbase(o) == ' ') {
+                index = _CC_PRINT * 2;
+            }
+            else if (POSIXA1Rbase(o) == '!') {
+                index = _CC_GRAPH * 2;
+            }
+            else if (POSIXA1Rbase(o) == '0') {
+                index = _CC_DIGIT * 2;
+            }
+            else if (POSIXA1Rbase(o) == 'A') {
+                index = _CC_UPPER * 2;
+            }
+            else {
+                assert(POSIXA1Rbase(o) == 'a');
+                index = _CC_LOWER * 2;
+            }
+        }
+        else {
+            index = FLAGS(o) * 2;
+        }
         if (index < C_ARRAY_LENGTH(anyofs)) {
             if (*anyofs[index] != '[')  {
                 sv_catpvs(sv, "[");
