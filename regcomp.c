@@ -19127,7 +19127,6 @@ S_optimize_regclass(pTHX_
             single_range = TRUE;
         }
         invlist_iterfinish(cp_list);
-    }
 
     /* If we know at compile time that this matches every possible code
      * point, any run-time dependencies don't matter */
@@ -19138,6 +19137,8 @@ S_optimize_regclass(pTHX_
         else {
             goto return_SANY;
         }
+    }
+
     }
 
     /* Similarly, for /l posix classes, if both a class and its complement
