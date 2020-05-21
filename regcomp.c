@@ -19128,17 +19128,16 @@ S_optimize_regclass(pTHX_
         }
         invlist_iterfinish(cp_list);
 
-    /* If we know at compile time that this matches every possible code
-     * point, any run-time dependencies don't matter */
-    if (start[0] == 0 && end[0] == UV_MAX) {
-        if (*invert) {
-            goto return_OPFAIL;
+        /* If we know at compile time that this matches every possible code
+         * point, any run-time dependencies don't matter */
+        if (start[0] == 0 && end[0] == UV_MAX) {
+            if (*invert) {
+                goto return_OPFAIL;
+            }
+            else {
+                goto return_SANY;
+            }
         }
-        else {
-            goto return_SANY;
-        }
-    }
-
     }
 
     /* Similarly, for /l posix classes, if both a class and its complement
