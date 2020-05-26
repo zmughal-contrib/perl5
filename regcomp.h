@@ -141,20 +141,20 @@ struct regnode_string {
 #define POSIXA1R_ALPHA_BIT   (1U << POSIXA1R_MASK_SHIFT)
 
 #define POSIXA1Rbase(n)                                                     \
-            (  '0' - 48                                                     \
+            (  '0' /* - 48                                                     \
              + (1  * ((n)->flags & POSIXA1R_1x_BIT) >> POSIXA1R_1x_SHIFT)   \
-             + (16 * ((n)->flags & 7)))
+             + (16 * ((n)->flags & 7))*/)
 
 #define POSIXA1Rdelta(n)                                                    \
-        (    9                                                              \
+        (    9  /*                                                            \
          + ( 1 * (((n)->flags & POSIXA1R_1L_BIT)  >> POSIXA1R_1L_SHIFT))    \
          + (16 * (((n)->flags & POSIXA1R_16L_BIT) >> POSIXA1R_16L_SHIFT))   \
-         + (68 * (((n)->flags & POSIXA1R_68L_BIT) >> POSIXA1R_68L_SHIFT)))
+         + (68 * (((n)->flags & POSIXA1R_68L_BIT) >> POSIXA1R_68L_SHIFT))*/)
 /*          __  Summing the above yields:
  *          94  which is the delta for [:print:], SPACE to TILDE (32 to 126 */
 
 #define POSIXA1Rmasked(n, c)                                                \
-     (((U8) (c)) & (((n)->flags & POSIXA1R_ALPHA_BIT) | ~POSIXA1R_ALPHA_BIT))
+     (((U8) (c)) /*& (((n)->flags & POSIXA1R_ALPHA_BIT) | ~POSIXA1R_ALPHA_BIT)*/)
 
 
 struct regnode_lstring { /* Constructed this way to keep the string aligned. */
