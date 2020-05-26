@@ -19827,7 +19827,6 @@ S_optimize_regclass(pTHX_
                          * node. */
 
                         if (   single_range
-                            && lowest_cp == '0'
                             /*|| (lowest_cp == 'A' && highest_cp == 'z')*/)
                         {
                             posix_class = 0;
