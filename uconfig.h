@@ -2302,6 +2302,13 @@
  */
 /*#define HAS_ATANH		/ **/
 
+/* HAS_NON_INT_BITFIELDS:
+ *	This symbol, if defined, indicates that the C compiler accepts, without
+ *	error or warning, struct bitfields that are declared with sizes other
+ *	than plain 'int'; for example 'unsigned char' is accepted.
+ */
+#define HAS_NON_INT_BITFIELDS	/**/
+
 /* HAS_BUILTIN_CHOOSE_EXPR:
  *	Can we handle GCC builtin for compile-time ternary-like expressions
  */
@@ -5260,6 +5267,6 @@
 #endif
 
 /* Generated from:
- * 14796a77fb4ae3335f5e589a98445bc6e838b688194f6f112537495f0814f5d5 config_h.SH
- * 6e8898de349ca5bd5102aa12be91e6884110157cb9267e661f6fc797bbd54649 uconfig.sh
+ * 891932f7e14a4406f301127b13d6834304af01f77de3b36418c5626a6fd9c945 config_h.SH
+ * cd7450a94c799301c62109265181ea05d946f1f117085617431dace2725c2e74 uconfig.sh
  * ex: set ro: */
