@@ -126,7 +126,6 @@ true)
 	os390*)
             shrpldflags='-W l,XPLINK,dll'
 	    linklibperl='libperl.x'
-	    DPERL_EXTERNAL_GLOB=''
 	    ;;
 	esac
 	case "$ldlibpthname" in
