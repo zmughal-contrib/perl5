@@ -3,7 +3,7 @@ package ExtUtils::MM;
 use strict;
 use ExtUtils::MakeMaker::Config;
 
-our $VERSION = '7.44';
+our $VERSION = '7.45';
 $VERSION =~ tr/_//d;
 
 require ExtUtils::Liblist;
@@ -70,6 +70,7 @@ $Is{VOS}    = $^O eq 'vos';
 $Is{QNX}    = $^O eq 'qnx';
 $Is{AIX}    = $^O eq 'aix';
 $Is{Darwin} = $^O eq 'darwin';
+$Is{OS390}  = $^O eq 'os390';
 
 $Is{Unix}   = !grep { $_ } values %Is;
 
