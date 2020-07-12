@@ -7160,6 +7160,47 @@ PP(pp_cmpchain_dup)
     RETURN;
 }
 
+static void
+invoke_finally_block(pTHX_ void *_arg)
+{
+    OP *start = (OP *)_arg;
+    I32 was_cxstack_ix = cxstack_ix;
+
+    cx_pushblock(CXt_FINALLY, G_VOID, PL_stack_sp, PL_savestack_ix);
+    ENTER;
+    SAVETMPS;
+
+    SAVEOP();
+    PL_op = start;
+
+    CALLRUNOPS(aTHX);
+
+    FREETMPS;
+    LEAVE;
+
+    {
+        PERL_CONTEXT *cx;
+
+        cx = CX_CUR();
+        assert(CxTYPE(cx) == CXt_FINALLY);
+
+        PL_stack_sp = PL_stack_base + cx->blk_oldsp;
+
+        CX_LEAVE_SCOPE(cx);
+        cx_popblock(cx);
+        CX_POP(cx);
+    }
+
+    assert(cxstack_ix == was_cxstack_ix);
+}
+
+PP(pp_pushfinally)
+{
+    SAVEDESTRUCTOR_X(invoke_finally_block, cSVOP->op_sv);
+
+    return NORMAL;
+}
+
 /*
  * ex: set ts=8 sts=4 sw=4 et:
  */

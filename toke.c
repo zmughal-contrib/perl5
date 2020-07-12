@@ -7615,6 +7615,11 @@ yyl_word_or_keyword(pTHX_ char *s, STRLEN len, I32 key, I32 orig_keyword, struct
             return yyl_sub(aTHX_ PL_bufptr, key);
         return yyl_just_a_word(aTHX_ s, len, orig_keyword, c);
 
+    case KEY_FINALLY:
+        Perl_ck_warner_d(aTHX_
+            packWARN(WARN_EXPERIMENTAL__FINALLY_BLOCK), "FINALLY is experimental");
+        PREBLOCK(FINALLY);
+
     case KEY_abs:
         UNI(OP_ABS);
 

@@ -17,16 +17,17 @@
 #define FEATURE_MYREF_BIT           0x0004
 #define FEATURE_EVALBYTES_BIT       0x0008
 #define FEATURE_FC_BIT              0x0010
-#define FEATURE_INDIRECT_BIT        0x0020
-#define FEATURE_ISA_BIT             0x0040
-#define FEATURE_POSTDEREF_QQ_BIT    0x0080
-#define FEATURE_REFALIASING_BIT     0x0100
-#define FEATURE_SAY_BIT             0x0200
-#define FEATURE_SIGNATURES_BIT      0x0400
-#define FEATURE_STATE_BIT           0x0800
-#define FEATURE_SWITCH_BIT          0x1000
-#define FEATURE_UNIEVAL_BIT         0x2000
-#define FEATURE_UNICODE_BIT         0x4000
+#define FEATURE_FINALLY_BLOCK_BIT   0x0020
+#define FEATURE_INDIRECT_BIT        0x0040
+#define FEATURE_ISA_BIT             0x0080
+#define FEATURE_POSTDEREF_QQ_BIT    0x0100
+#define FEATURE_REFALIASING_BIT     0x0200
+#define FEATURE_SAY_BIT             0x0400
+#define FEATURE_SIGNATURES_BIT      0x0800
+#define FEATURE_STATE_BIT           0x1000
+#define FEATURE_SWITCH_BIT          0x2000
+#define FEATURE_UNIEVAL_BIT         0x4000
+#define FEATURE_UNICODE_BIT         0x8000
 
 #define FEATURE_BUNDLE_DEFAULT	0
 #define FEATURE_BUNDLE_510	1
@@ -46,7 +47,7 @@
     ? (PL_curcop->cop_features & (mask)) : FALSE)
 
 /* The longest string we pass in.  */
-#define MAX_FEATURE_LEN (sizeof("postderef_qq")-1)
+#define MAX_FEATURE_LEN (sizeof("finally_block")-1)
 
 #define FEATURE_FC_IS_ENABLED \
     ( \
@@ -150,6 +151,12 @@
 	 FEATURE_IS_ENABLED_MASK(FEATURE_MYREF_BIT) \
     )
 
+#define FEATURE_FINALLY_BLOCK_IS_ENABLED \
+    ( \
+	CURRENT_FEATURE_BUNDLE == FEATURE_BUNDLE_CUSTOM && \
+	 FEATURE_IS_ENABLED_MASK(FEATURE_FINALLY_BLOCK_BIT) \
+    )
+
 #define FEATURE_UNICODE_IS_ENABLED \
     ( \
 	(CURRENT_FEATURE_BUNDLE >= FEATURE_BUNDLE_511 && \
@@ -247,6 +254,11 @@ S_magic_sethint_feature(pTHX_ SV *keysv, const char *keypv, STRLEN keylen,
             if (keylen == sizeof("feature_fc")-1
                  && memcmp(subf+1, "c", keylen - sizeof("feature_")) == 0) {
                 mask = FEATURE_FC_BIT;
+                break;
+            }
+            else if (keylen == sizeof("feature_finally_block")-1
+                 && memcmp(subf+1, "inally_block", keylen - sizeof("feature_")) == 0) {
+                mask = FEATURE_FINALLY_BLOCK_BIT;
                 break;
             }
             return;

@@ -5832,6 +5832,7 @@ t/op/filehandle.t		Tests for https://github.com/Perl/perl5/issues/10133
 t/op/filetest.t			See if file tests work
 t/op/filetest_stack_ok.t	See if file tests leave their argument on the stack
 t/op/filetest_t.t		See if -t file test works
+t/op/FINALLY.t			See if FINALLY blocks work
 t/op/flip.t			See if range operator works
 t/op/for.t			See if for loops work
 t/op/fork.t			See if fork works

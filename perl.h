@@ -5019,7 +5019,8 @@ EXTCONST char* const PL_block_type[] = {
 	"SUB",
 	"FORMAT",
 	"EVAL",
-	"SUBST"
+	"SUBST",
+        "FINALLY"
 };
 #else
 EXTCONST char* PL_block_type[];
