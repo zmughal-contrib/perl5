@@ -654,12 +654,12 @@ warning when used.
 If multiple C<FINALLY> blocks are contained in a single scope, they are
 executed in LIFO order; the last one reached is the first one executed.
 
-The code stored by the C<FINALLY> block will be invoked if control leaves its
-containing block due to regular fallthrough, explicit C<return>, exceptions
-thrown by C<die> or propagated by functions called by it, C<goto>, or any of
-the loop control statements C<next>, C<last> or C<redo>.
+The code stored by the C<FINALLY> block will be invoked when control leaves
+its containing block due to regular fallthrough, explicit C<return>,
+exceptions thrown by C<die> or propagated by functions called by it, C<goto>,
+or any of the loop control statements C<next>, C<last> or C<redo>.
 
-If the flow of control does not reach the C<FINALLY> block itself then its
+If the flow of control does not reach the C<FINALLY> statement itself then its
 body is not stored for later execution. (This is in direct contrast to the
 code provided by an C<END> phaser block, which is always enqueued by the
 compiler, regardless of whether execution ever reached the line it was given
