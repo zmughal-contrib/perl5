@@ -779,7 +779,9 @@ CPAN module.
 
 =head2 The 'finally_block' feature
 
-TODO
+This feature enables the C<FINALLY> block syntax, which allows a block of code
+to be deferred until when the flow of control leaves the block which contained
+it. For more details, see L<perlsyn/FINALLY>.
 
 =head1 FEATURE BUNDLES
 
