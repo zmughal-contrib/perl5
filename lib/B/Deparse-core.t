@@ -361,6 +361,7 @@ my %not_tested = map { $_ => 1} qw(
     END
     INIT
     UNITCHECK
+    FINALLY
     default
     else
     elsif
