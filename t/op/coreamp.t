@@ -1159,7 +1159,7 @@ like $@, qr'^Undefined format "STDOUT" called',
       File::Spec::Functions::updir,'regen','keywords.pl'
    );
   my %nottest_words = map { $_ => 1 } qw(
-    AUTOLOAD BEGIN CHECK CORE DESTROY END INIT UNITCHECK
+    AUTOLOAD BEGIN CHECK CORE DESTROY END INIT UNITCHECK FINALLY
     __DATA__ __END__
     and cmp default do dump else elsif eq eval for foreach format ge given goto
     grep gt if isa last le local lt m map my ne next no or our package print
