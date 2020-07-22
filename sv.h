@@ -1389,6 +1389,15 @@ object type. Exposed to perl code via Internals::SvREADONLY().
 				(char*)saferealloc((Malloc_t)SvPVX(sv), \
 						   (MEM_SIZE)((n)))));  \
 		 } STMT_END
+/*
+=for apidoc Am|void|SvPV_shrink_to_cur|SV* sv
+Trim any trailing unused memory in the PV of C<sv>, which needs to have a real
+C<PV> that is unencombered by things like COW.  Using
+C<L</SV_CHECK_THINKFIRST>> or C<L</SV_CHECK_THINKFIRST_COW_DROP>> before
+calling this should clean it up.
+
+=cut
+*/
 
 #define SvPV_shrink_to_cur(sv) STMT_START { \
 		   const STRLEN _lEnGtH = SvCUR(sv) + 1; \
