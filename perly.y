@@ -491,6 +491,7 @@ barestmt:	PLUGSTMT
                           }
 
 			  $$ = newPVOP(OP_PUSHFINALLY, 0, (char *)start);
+			  cPVOPx($$)->op_oproot = block;
 			}
 	|	YADAYADA ';'
 			{

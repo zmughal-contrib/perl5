@@ -590,6 +590,8 @@ static const struct OP_methods {
   { STR_WITH_LEN("rclass"),  op_offset_special, 0,                     },/*56*/
 #  else
   { STR_WITH_LEN("rclass"),  op_offset_special, 0,                     },/*56*/
+  { STR_WITH_LEN("opstart"), op_offset_special, 0,                     },/*57*/
+  { STR_WITH_LEN("oproot"),  op_offset_special, 0,                     },/*58*/
 #  endif
 };
 
@@ -867,6 +869,8 @@ next(o)
 	B::METHOP::meth_sv   = 54
 	B::PMOP::pmregexp    = 55
 	B::METHOP::rclass    = 56
+        B::PVOP::opstart     = 57
+        B::PVOP::oproot      = 58
     PREINIT:
 	SV *ret;
     PPCODE:
@@ -1095,6 +1099,14 @@ next(o)
 		);
 #endif
 		break;
+            case 57: /* B::PVOP::opstart */
+            case 58: /* B::PVOP::oproot */
+                if(o->op_type != OP_PUSHFINALLY)
+                    croak("Expected op_type==OP_PUSHFINALLY for %s", op_methods[ix].name);
+                ret = make_op_object(aTHX_
+                    (ix == 58)
+                        ? cPVOPo->op_oproot : (OP *)cPVOPo->op_pv);
+                break;
 	    default:
 		croak("method %s not implemented", op_methods[ix].name);
 	} else {

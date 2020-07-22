@@ -421,7 +421,8 @@ struct padop {
 
 struct pvop {
     BASEOP
-    char *	op_pv;    /* if op_type==OP_PUSHFINALLY, this is an OP* */
+    char *	op_pv;     /* if op_type==OP_PUSHFINALLY, this is an OP* */
+    OP   *      op_oproot; /* for op_type==OP_PUSHFINALLY, this is the root of the OP* */
 };
 
 struct loop {
