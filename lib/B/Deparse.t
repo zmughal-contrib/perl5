@@ -3162,3 +3162,9 @@ $a = int($c == $d != $e);
 $a = $b < ($c == $d != $e);
 $a = $b == ($c == $d != $e);
 $a = $b & $c == $d != $e;
+####
+# FINALLY blocks
+# CONTEXT use feature "finally_block"; no warnings 'experimental::finally_block';
+FINALLY {
+    $a = 123;
+}

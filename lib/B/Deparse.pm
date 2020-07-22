@@ -6552,6 +6552,13 @@ sub pp_argdefelem {
 }
 
 
+sub pp_pushfinally {
+    my $self = shift;
+    my($op, $cx) = @_;
+    my $body = $self->deparse($op->oproot);
+    return "FINALLY {\n\t$body\n\b}\cK";
+}
+
 1;
 __END__
 
