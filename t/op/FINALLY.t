@@ -6,7 +6,7 @@ BEGIN {
     set_up_inc('../lib');
 }
 
-plan 24;
+plan 26;
 
 use feature 'finally_block';
 no warnings 'experimental::finally_block';
@@ -87,6 +87,18 @@ no warnings 'experimental::finally_block';
 }
 
 {
+   my $x = "";
+
+   my $counter = 1;
+   {
+      FINALLY { $x .= "A" }
+      redo if $counter++ < 5;
+   }
+
+   is($x, "AAAAA", 'FINALLY block can happen multiple times');
+}
+
+{
     my $x = "";
 
     {
@@ -135,6 +147,24 @@ no warnings 'experimental::finally_block';
     $sub->();
 
     is($x, "", 'FINALLY block inside sub does not happen if entered but returned early');
+}
+
+{
+   my $x = "";
+
+   my sub after {
+      $x .= "c";
+   }
+
+   my sub before {
+      $x .= "a";
+      FINALLY { $x .= "b" }
+      goto \&after;
+   }
+
+   before();
+
+   is($x, "abc", 'FINALLY block invoked before tail-call');
 }
 
 # Sequencing with respect to variable cleanup
