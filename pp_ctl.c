@@ -2477,7 +2477,7 @@ PP(pp_return)
         /* Check for  FINALLY { return; } */
         for(i = cxstack_ix; i > cxix; i--) {
             if(CxTYPE(&cxstack[i]) == CXt_FINALLY)
-                DIE(aTHX_ "Can't \"return\" out of a FINALLY block");
+                Perl_croak(aTHX_ "Can't \"%s\" out of a FINALLY block", "return");
         }
         if (cxix < 0) {
             if (!(       PL_curstackinfo->si_type == PERLSI_SORT
@@ -2623,7 +2623,7 @@ S_unwind_loop(pTHX)
         /* Check for  FINALLY { last ... } etc */
         for(i = cxstack_ix; i > cxix; i--) {
             if(CxTYPE(&cxstack[i]) == CXt_FINALLY)
-                croak("Can't \"%s\" out of a FINALLY block", OP_NAME(PL_op));
+                Perl_croak(aTHX_ "Can't \"%s\" out of a FINALLY block", OP_NAME(PL_op));
         }
 	dounwind(cxix);
     }
@@ -3109,7 +3109,7 @@ PP(pp_goto)
 	    case CXt_NULL:
 		DIE(aTHX_ "Can't \"goto\" out of a pseudo block");
             case CXt_FINALLY:
-                DIE(aTHX_ "Can't \"goto\" out of a FINALLY block");
+                croak("Can't \"%s\" out of a FINALLY block", "goto");
 	    default:
 		if (ix)
 		    DIE(aTHX_ "panic: goto, type=%u, ix=%ld",
