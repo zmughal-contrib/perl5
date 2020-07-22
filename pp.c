@@ -7196,7 +7196,7 @@ invoke_finally_block(pTHX_ void *_arg)
 
 PP(pp_pushfinally)
 {
-    SAVEDESTRUCTOR_X(invoke_finally_block, cSVOP->op_sv);
+    SAVEDESTRUCTOR_X(invoke_finally_block, cPVOP->op_pv);
 
     return NORMAL;
 }

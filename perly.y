@@ -490,7 +490,7 @@ barestmt:	PLUGSTMT
                               }
                           }
 
-			  $$ = newSVOP(OP_PUSHFINALLY, 0, (SV *)start);
+			  $$ = newPVOP(OP_PUSHFINALLY, 0, (char *)start);
 			}
 	|	YADAYADA ';'
 			{
