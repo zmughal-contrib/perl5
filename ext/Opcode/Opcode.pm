@@ -6,7 +6,7 @@ use strict;
 
 our($VERSION, @ISA, @EXPORT_OK);
 
-$VERSION = "1.47";
+$VERSION = "1.48";
 
 use Carp;
 use Exporter ();
@@ -433,6 +433,8 @@ These are a hotchpotch of opcodes still waiting to be considered
     enterwhen leavewhen
     break continue
     smartmatch
+
+    pushfinally
 
     custom -- where should this go
 
