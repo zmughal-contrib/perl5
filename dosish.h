@@ -71,7 +71,7 @@
  *	information.
  */
 #if defined(WIN64) || defined(USE_LARGE_FILES)
-#  define Stat_t struct _stati64
+#  define Stat_t struct w32_stat
 #else
 #  define Stat_t struct stat
 #endif
