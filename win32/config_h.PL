@@ -12,6 +12,8 @@ use File::Compare qw(compare);
 use File::Copy qw(copy);
 use File::Basename qw(fileparse);
 
+${^WIN32_SLOPPY_STAT} = 0;
+
 my ($name, $dir) = fileparse($0);
 $name =~ s#^(.*)\.PL$#../$1.SH#;
 my %opt;
