@@ -9,7 +9,7 @@ bugs.  (Bugs reports about microperl without fixes/patches are equivalent
 to wishlist requests - they won't be discarded, but they likely won't get
 worked on either, unless they chance to coincide with someone's personal itch)
 
-We assume ANSI C89 plus the following:
+We assume ANSI XXX C89 plus the following:
 - <stddef.h>, <stdlib.h>
 - rename()
 - opendir(), readdir(), closedir() (via dirent.h)

@@ -150,8 +150,10 @@ C<(bool)!!(cbool)> in a ternary triggers a bug in xlc on AIX
 =cut
 */
 #define cBOOL(cbool) ((cbool) ? (bool)1 : (bool)0)
+/* on c99, XXX can we get rid of char as bool? */
 
 /* Try to figure out __func__ or __FUNCTION__ equivalent, if any.
+ * XXX
  * XXX Should really be a Configure probe, with HAS__FUNCTION__
  *     and FUNCTION__ as results.
  * XXX Similarly, a Configure probe for __FILE__ and __LINE__ is needed. */

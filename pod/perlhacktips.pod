@@ -20,9 +20,10 @@ to do that first.
 
 =head1 COMMON PROBLEMS
 
-Perl source plays by ANSI C89 rules: no C99 (or C++) extensions.
+Perl source plays by ANSI C89 rules: with some C99  extensions.
 You don't care about some particular platform having broken Perl? I
 hear there is still a strong demand for J2EE programmers.
+(XXX or C++)
 
 =head2 Perl environment problems
 
@@ -411,7 +412,7 @@ Using //-comments
   // This function bamfoodles the zorklator.   /* BAD */
 
 That is C99 or C++.  Perl is C89.  Using the //-comments is silently
-allowed by many C compilers but cranking up the ANSI C89 strictness
+XXX allowed by many C compilers but cranking up the ANSI C89 strictness
 (which we like to do) causes the compilation to fail.
 
 =item *
@@ -424,7 +425,7 @@ Mixing declarations and code
     set_zorkmids(n);    /* BAD */
     int q = 4;
 
-That is C99 or C++.  Some C compilers allow that, but you shouldn't.
+That is XXX C99 or C++.  Some C compilers allow that, but you shouldn't.
 
 The gcc option C<-Wdeclaration-after-statement> scans for such
 problems (by default on starting from Perl 5.9.4).
@@ -435,7 +436,7 @@ Introducing variables inside for()
 
   for(int i = ...; ...; ...) {    /* BAD */
 
-That is C99 or C++.  While it would indeed be awfully nice to have that
+That is XXX C99 or C++.  While it would indeed be awfully nice to have that
 also in C89, to limit the scope of the loop variable, alas, we cannot.
 
 =item *
@@ -1366,7 +1367,7 @@ quick hint:
     $ less out
 
 (you probably need to add C<-shared> to the <-Alddlflags> line until RT
-#118199 is resolved)
+#XXX 118199 is resolved)
 
 The F<gprof> tool can then display the collected data in various ways.
 Usually F<gprof> understands the following options:
@@ -1423,7 +1424,7 @@ quick hint:
     $ less regexec.c.gcov
 
 (you probably need to add C<-shared> to the <-Alddlflags> line until RT
-#118199 is resolved)
+#XXX 118199 is resolved)
 
 Running the profiled version of Perl will cause profile output to be
 generated.  For each source file an accompanying F<.gcda> file will be

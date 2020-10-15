@@ -123,7 +123,7 @@ struct regnode_string {
     U8	str_len;
     U8  type;
     U16 next_off;
-    char string[1];
+    char string[];
 };
 
 struct regnode_lstring { /* Constructed this way to keep the string aligned. */
@@ -131,7 +131,7 @@ struct regnode_lstring { /* Constructed this way to keep the string aligned. */
     U8  type;
     U16 next_off;
     U32 str_len;    /* Only 18 bits allowed before would overflow 'next_off' */
-    char string[1];
+    char string[];
 };
 
 struct regnode_anyofhs { /* Constructed this way to keep the string aligned. */

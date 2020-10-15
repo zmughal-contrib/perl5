@@ -5686,7 +5686,7 @@ EXTCONST bool PL_valid_types_NV_set[];
 
 #endif
 
-/* In C99 we could use designated (named field) union initializers.
+/* In XXX C99 we could use designated (named field) union initializers.
  * In C89 we need to initialize the member declared first.
  * In C++ we need extern C initializers.
  *
@@ -6561,7 +6561,7 @@ the plain locale pragma without a parameter (S<C<use locale>>) is in effect.
 This macro should be used as a statement.  It declares a private variable
 (whose name begins with an underscore) that is needed by the other macros in
 this section.  Failing to include this correctly should lead to a syntax error.
-For compatibility with C89 C compilers it should be placed in a block before
+For compatibility with XXX C89 C compilers it should be placed in a block before
 any executable statements.
 
 =for apidoc Am|void|STORE_LC_NUMERIC_FORCE_TO_UNDERLYING
@@ -7554,7 +7554,7 @@ Allows one ending \0
  *
  * This may happen if the compiler doesn't expose the C99 math like
  * the fpclassify() without some special switches.  Perl tries to
- * stay C89, so for example -std=c99 is not an option.
+ * stay XXX C89, so for example -std=c99 is not an option.
  *
  * The Perl_isinf() and Perl_isnan() should have been defined even if
  * the C99 isinf() and isnan() are unavailable, and the NV_MIN becomes

@@ -544,7 +544,6 @@ S_is_utf8_cp_above_31_bits(const U8 * const s,
      */
 
     const STRLEN len = e - s;
-    int is_overlong;
 
     PERL_ARGS_ASSERT_IS_UTF8_CP_ABOVE_31_BITS;
 
@@ -596,7 +595,7 @@ S_is_utf8_cp_above_31_bits(const U8 * const s,
      * but for these huge code points, speed shouldn't be a consideration, and
      * the compiler does have enough information, since it's static to this
      * file, to optimize to just the needed parts.) */
-    is_overlong = is_utf8_overlong_given_start_byte_ok(s, len);
+    const int is_overlong = is_utf8_overlong_given_start_byte_ok(s, len);
 
     /* If it isn't overlong, more than 31 bits are required. */
     if (is_overlong == 0) {
@@ -825,10 +824,8 @@ S_does_utf8_overflow(const U8 * const s,
 
     {
         const STRLEN len = e - s;
-        const U8 *x;
         const U8 * y = (const U8 *) HIGHEST_REPRESENTABLE_UTF8;
-
-        for (x = s; x < e; x++, y++) {
+        for (const U8 *x = s; x < e; x++, y++) {
 
             if (UNLIKELY(NATIVE_UTF8_TO_I8(*x) == *y)) {
                 continue;

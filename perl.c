@@ -3302,10 +3302,10 @@ Perl_require_pv(pTHX_ const char *pv)
 STATIC void
 S_usage(pTHX)		/* XXX move this out into a module ? */
 {
-    /* This message really ought to be max 23 lines.
+    /* This message really ought to be max 23 XXX lines.
      * Removed -h because the user already knows that option. Others? */
 
-    /* Grouped as 6 lines per C string literal, to keep under the ANSI C 89
+    /* Grouped as 6 lines per C string literal, to keep under the ANSI C XXX 89
        minimum of 509 character string literals.  */
     static const char * const usage_msg[] = {
 "  -0[octal]         specify record separator (\\0, if no argument)\n"

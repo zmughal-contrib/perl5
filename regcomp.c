@@ -19785,7 +19785,8 @@ S_regclass(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth,
                                    * CHARBITS - ANYOFR_BASE_BITS))))
 
         {
-            U8 low_utf8[UTF8_MAXBYTES+1];
+            const unsigned int khw_max = 13;
+            U8 low_utf8[khw_max+1];
             U8 high_utf8[UTF8_MAXBYTES+1];
 
             ret = reganode(pRExC_state, ANYOFR,
