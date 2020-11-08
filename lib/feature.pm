@@ -5,12 +5,13 @@
 
 package feature;
 
-our $VERSION = '1.60';
+our $VERSION = '1.61';
 
 our %feature = (
     fc               => 'feature_fc',
     isa              => 'feature_isa',
     say              => 'feature_say',
+    trim             => 'feature_trim',
     state            => 'feature_state',
     switch           => 'feature_switch',
     bitwise          => 'feature_bitwise',
@@ -32,7 +33,7 @@ our %feature_bundle = (
     "5.15"    => [qw(current_sub evalbytes fc indirect multidimensional say state switch unicode_eval unicode_strings)],
     "5.23"    => [qw(current_sub evalbytes fc indirect multidimensional postderef_qq say state switch unicode_eval unicode_strings)],
     "5.27"    => [qw(bitwise current_sub evalbytes fc indirect multidimensional postderef_qq say state switch unicode_eval unicode_strings)],
-    "all"     => [qw(bitwise current_sub declared_refs evalbytes fc indirect isa multidimensional postderef_qq refaliasing say signatures state switch unicode_eval unicode_strings)],
+    "all"     => [qw(bitwise current_sub declared_refs evalbytes fc indirect isa multidimensional postderef_qq refaliasing say signatures state switch trim unicode_eval unicode_strings)],
     "default" => [qw(indirect multidimensional)],
 );
 
@@ -391,6 +392,16 @@ previous versions, it was simply on all the time.
 
 You can use the L<multidimensional> module on CPAN to disable
 multidimensional array emulation for older versions of Perl.
+
+=head2 The 'trim' feature
+
+C<use feature 'trim'> tells the compiler to enable the C<trim>
+function which implements removing whitespace from each end of a
+string.
+
+See L<perlfunc/trim> for details.
+
+This feature is available from Perl 5.34 onwards.
 
 =head1 FEATURE BUNDLES
 

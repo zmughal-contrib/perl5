@@ -39,6 +39,7 @@ my %feature = (
     isa             => 'isa',
     indirect        => 'indirect',
     multidimensional => 'multidimensional',
+    trim            => 'trim',
 );
 
 # NOTE: If a feature is ever enabled in a non-contiguous range of Perl
@@ -476,7 +477,7 @@ read_only_bottom_close_and_rename($h);
 __END__
 package feature;
 
-our $VERSION = '1.60';
+our $VERSION = '1.61';
 
 FEATURES
 
@@ -797,6 +798,16 @@ previous versions, it was simply on all the time.
 
 You can use the L<multidimensional> module on CPAN to disable
 multidimensional array emulation for older versions of Perl.
+
+=head2 The 'trim' feature
+
+C<use feature 'trim'> tells the compiler to enable the C<trim>
+function which implements removing whitespace from each end of a
+string.
+
+See L<perlfunc/trim> for details.
+
+This feature is available from Perl 5.34 onwards.
 
 =head1 FEATURE BUNDLES
 
