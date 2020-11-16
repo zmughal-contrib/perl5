@@ -4889,7 +4889,7 @@ S_setup_EXACTISH_ST(pTHX_ const regnode * const text_node,
             /* Then the rest of the rows (folds).  The mask is based on, like,
              * ~('A' ^ 'a') is a 1 in all bits where these are the same, and 0
              * where they differ. */
-            for (i = 1; i < m->count; i++) {
+            for (i = 1; i < (PERL_UINT_FAST8_T) m->count; i++) {
                 byte_mask[j]  &= ~ (byte_anded[j] ^ matches[i][j]);
                 byte_anded[j] &= matches[i][j];
             }
@@ -4934,7 +4934,7 @@ S_setup_EXACTISH_ST(pTHX_ const regnode * const text_node,
         U8 output_index = 0;
 
         if (m->count > 1) {
-            for (i = 0; i < m->count; i++) {
+            for (i = 0; i < (PERL_UINT_FAST8_T) m->count; i++) {
                 if (i != index_of_longest) {
                     assert(cur_pos + lengths[i] <= C_ARRAY_LENGTH(m->matches));
                     Copy(matches[i], m->matches + cur_pos, lengths[i], U8);
@@ -10015,8 +10015,8 @@ S_regrepeat(pTHX_ regexp *prog, char **startposp, const regnode *p,
              * and the rest matched as well, but could have false positives */
 
             do {
-                PERL_UINT_FAST8_T i;
-                PERL_UINT_FAST8_T * matches = Binfo.matches;
+                PERL_INT_FAST8_T i;
+                U8 * matches = Binfo.matches;
 
                 /* The first bytes were definitive.  Look at the remaining */
                 for (i = 0; i < Binfo.count; i++) {
@@ -10053,8 +10053,8 @@ S_regrepeat(pTHX_ regexp *prog, char **startposp, const regnode *p,
          * there were no initial bytes that could rule out anything
          * definitively. Use brute force to examine all the possibilities */
         while (scan < this_eol && hardcount < max) {
-            PERL_UINT_FAST8_T i;
-            PERL_UINT_FAST8_T * matches = Binfo.matches;
+            PERL_INT_FAST8_T i;
+            U8 * matches = Binfo.matches;
 
             for (i = 0; i < Binfo.count; i++) {
                 if (memEQ(scan, matches, Binfo.lengths[i])) {

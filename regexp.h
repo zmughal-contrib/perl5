@@ -723,12 +723,13 @@ struct next_matchable_info {
     PERL_UINT_FAST8_T initial_definitive;
     PERL_UINT_FAST8_T initial_exact;
     PERL_UINT_FAST8_T lengths[MAX_MATCHES];
-    U8 matches[18]; /* The size is from trial and error, and could change with
-                       new Unicode standards, in which case there is an
-                       assertion that should start failing.  This size could be
-                       calculated in one of the regen scripts dealing with
-                       Unicode, but khw thinks the likelihood of it changing is
-                       low enough that it isn't worth the effort. */
+
+    /* The size is from trial and error, and could change with new Unicode
+     * standards, in which case there is an assertion that should start
+     * failing.  This size could be calculated in one of the regen scripts
+     * dealing with Unicode, but khw thinks the likelihood of it changing is
+     * low enough that it isn't worth the effort. */
+    U8 matches[18];
 };
 
 typedef I32 CHECKPOINT;
