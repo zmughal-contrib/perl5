@@ -3591,12 +3591,12 @@ S_scan_const(pTHX_ char *start)
 	     * processing should be deferred to the regex compiler.  To be a
 	     * charname it must be followed immediately by a '{', and not look
 	     * like \N followed by a curly quantifier, i.e., not something like
-	     * \N{3,}.  regcurly returns a boolean indicating if it is a legal
-	     * quantifier */
+	     * \N{3,}.  reg_iscurly returns a boolean indicating if it is
+	     * a legal quantifier */
 	    else if (PL_lex_inpat
 		    && (*s != 'N'
 			|| s[1] != '{'
-			|| regcurly(s + 1, send, NULL)))
+			|| reg_iscurly(s + 1, send)))
 	    {
 		*d++ = '\\';
 		goto default_action;
@@ -4322,7 +4322,7 @@ S_intuit_more(pTHX_ char *s, char *e)
 
     /* In a pattern, so maybe we have {n,m}. */
     if (*s == '{') {
-	if (regcurly(s, e, NULL)) {
+	if (reg_iscurly(s, e)) {
 	    return FALSE;
 	}
 	return TRUE;
