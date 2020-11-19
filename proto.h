@@ -5850,7 +5850,7 @@ STATIC regnode_offset	S_regbranch(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, I
 STATIC regnode_offset	S_regclass(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth, const bool stop_at_1, bool allow_multi_fold, const bool silence_non_portable, const bool strict, bool optimizable, SV** ret_invlist);
 #define PERL_ARGS_ASSERT_REGCLASS	\
 	assert(pRExC_state); assert(flagp)
-STATIC bool	S_regcurly(const char *s, const char *e, RExC_state_t *pRExC_state, char ** final, U32 minmax[2])
+STATIC bool	S_regcurly(pTHX_ const char *s, const char *e, RExC_state_t *pRExC_state, char ** final, U32 minmax[2])
 			__attribute__warn_unused_result__;
 #define PERL_ARGS_ASSERT_REGCURLY	\
 	assert(s); assert(e)
@@ -6132,7 +6132,7 @@ PERL_CALLCONV SV*	Perl_invlist_clone(pTHX_ SV* const invlist, SV* newlist);
 	assert(invlist)
 #endif
 #if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_TOKE_C)
-PERL_CALLCONV bool	Perl_reg_iscurly(const char *s, const char *e)
+PERL_CALLCONV bool	Perl_reg_iscurly(pTHX_ const char *s, const char *e)
 			__attribute__warn_unused_result__;
 #define PERL_ARGS_ASSERT_REG_ISCURLY	\
 	assert(s); assert(e)

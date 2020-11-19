@@ -2343,10 +2343,10 @@ EXTp	|UV	|_to_fold_latin1|const U8 c|NN U8 *p|NN STRLEN *lenp|const unsigned int
 EpX	|SV*	|invlist_clone	|NN SV* const invlist|NULLOK SV* newlist
 #endif
 #if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_TOKE_C)
-EXpRT	|bool	|reg_iscurly	|NN const char *s|NN const char *e
+EXpR	|bool	|reg_iscurly	|NN const char *s|NN const char *e
 #endif
 #if defined(PERL_IN_REGCOMP_C)
-ERTS	|bool	|regcurly	|NN const char *s|NN const char *e \
+ERS	|bool	|regcurly	|NN const char *s|NN const char *e \
 				|NULLOK RExC_state_t *pRExC_state \
 				|NULLOK char ** final|NULLOK U32 minmax[2]
 #endif

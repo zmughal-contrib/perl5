@@ -1069,7 +1069,7 @@
 #define regatom(a,b,c)		S_regatom(aTHX_ a,b,c)
 #define regbranch(a,b,c,d)	S_regbranch(aTHX_ a,b,c,d)
 #define regclass(a,b,c,d,e,f,g,h,i)	S_regclass(aTHX_ a,b,c,d,e,f,g,h,i)
-#define regcurly		S_regcurly
+#define regcurly(a,b,c,d,e)	S_regcurly(aTHX_ a,b,c,d,e)
 #define regex_set_precedence	S_regex_set_precedence
 #define reginsert(a,b,c,d)	S_reginsert(aTHX_ a,b,c,d)
 #define regnode_guts(a,b,c,d)	S_regnode_guts(aTHX_ a,b,c,d)
@@ -1157,7 +1157,7 @@
 #define invlist_clone(a,b)	Perl_invlist_clone(aTHX_ a,b)
 #  endif
 #  if defined(PERL_IN_REGCOMP_C) || defined(PERL_IN_TOKE_C)
-#define reg_iscurly		Perl_reg_iscurly
+#define reg_iscurly(a,b)	Perl_reg_iscurly(aTHX_ a,b)
 #  endif
 #  if defined(PERL_IN_REGEXEC_C)
 #define advance_one_LB(a,b,c)	S_advance_one_LB(aTHX_ a,b,c)
