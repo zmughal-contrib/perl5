@@ -1409,19 +1409,25 @@ or casts
  * needed.  (The NV casts stop any warnings about comparison always being true
  * if called with an unsigned.  The cast preserves the sign, which is all we
  * care about.) */
-#define withinCOUNT(c, l, n) (__ASSERT_((NV) (l) >= 0)                         \
-                              __ASSERT_((NV) (n) >= 0)                         \
-   (((WIDEST_UTYPE) (((c)) - ((l) | 0))) <= (((WIDEST_UTYPE) ((n) | 0)))))
+#define ASSERT_FOR_withinCOUNT_(l,n)     __ASSERT_((NV) (l) >= 0)             \
+                                         __ASSERT_((NV) (n) >= 0)
+#define withinCOUNT_NO_ASSERT_(c, l, n)  (((WIDEST_UTYPE) (((c)) - ((l) | 0))) \
+                                      <= (((WIDEST_UTYPE) ((n) | 0))))
+#define withinCOUNT(c, l, n)        (ASSERT_FOR_withinCOUNT_((l), (n))         \
+                                      withinCOUNT_NO_ASSERT_((c), (l), (n)))
+                                 
 
 /* Returns true if c is in the range l..u, where 'l' is non-negative
  * Written this way so that after optimization, only one conditional test is
  * needed. */
-#define inRANGE(c, l, u) (__ASSERT_((u) >= (l))                                \
-   (  (sizeof(c) == sizeof(U8))  ? withinCOUNT(((U8)  (c)), (l), ((u) - (l)))  \
-    : (sizeof(c) == sizeof(U16)) ? withinCOUNT(((U16) (c)), (l), ((u) - (l)))  \
-    : (sizeof(c) == sizeof(U32)) ? withinCOUNT(((U32) (c)), (l), ((u) - (l)))  \
-    : (__ASSERT_(sizeof(c) == sizeof(WIDEST_UTYPE))                            \
-                          withinCOUNT(((WIDEST_UTYPE) (c)), (l), ((u) - (l))))))
+#define inRANGE_helper_(cast, c, l, u)                                      \
+                withinCOUNT_NO_ASSERT_(((cast) (c)), (l), ((u) - (l)))
+#define inRANGE(c, l, u) (__ASSERT_((NV) (l) >= 0) __ASSERT_((u) >= (l))    \
+   (  (sizeof(c) == sizeof(U8))  ? inRANGE_helper_(U8, (c), (l), ((u)))     \
+    : (sizeof(c) == sizeof(U16)) ? inRANGE_helper_(U16,(c), (l), ((u)))     \
+    : (sizeof(c) == sizeof(U32)) ? inRANGE_helper_(U32,(c), (l), ((u)))     \
+             : (__ASSERT_(sizeof(c) == sizeof(WIDEST_UTYPE))                \
+                          inRANGE_helper_(WIDEST_UTYPE,(c), (l), ((u))))))
 
 #ifdef EBCDIC
 #   ifndef _ALL_SOURCE
