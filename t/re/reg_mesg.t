@@ -12,6 +12,7 @@ BEGIN {
 skip_all_without_unicode_tables();
 
 use strict;
+use warnings;
 use open qw(:utf8 :std);
 
 # Kind of a kludge to mark warnings to be expected only if we are testing
@@ -889,7 +890,6 @@ for my $strict ("",  "no warnings 'experimental::re_strict'; use re 'strict';") 
                         # Test that whether the warning is on by default is
                         # correct.  This test relies on the fact that we
                         # are outside the scope of any ‘use warnings’.
-                        local $^W;
                         my @warns = capture_warnings(sub { $_ = "x";
                                                         eval "$strict $regex" });
                         # Warning should be on as well if is testing
