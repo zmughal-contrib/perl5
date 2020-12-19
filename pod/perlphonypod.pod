@@ -1,0 +1,12 @@
+=encoding utf8
+
+=head1 NAME
+
+perlphonypod - Phony POD
+
+=head1 DESCRIPTION
+
+This document is nonsense.
+
+=cut
+

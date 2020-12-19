@@ -5299,6 +5299,7 @@ pod/perlop.pod			Perl operators and precedence
 pod/perlopentut.pod		Perl open() tutorial
 pod/perlpacktut.pod		Perl pack() and unpack() tutorial
 pod/perlperf.pod		Perl Performance and Optimization Techniques
+pod/perlphonypod.pod		Phony POD
 pod/perlpod.pod			Perl plain old documentation
 pod/perlpodspec.pod		Perl plain old documentation format specification
 pod/perlpodstyle.pod		Perl POD style guide
