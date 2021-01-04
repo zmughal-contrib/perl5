@@ -1498,7 +1498,7 @@
 #  endif
 #  if !(defined(HAS_NL_LANGINFO))
 #    if defined(PERL_IN_LOCALE_C)
-#define my_nl_langinfo		S_my_nl_langinfo
+#define my_nl_langinfo(a,b)	S_my_nl_langinfo(aTHX_ a,b)
 #    endif
 #  endif
 #  if !(defined(PERL_DEFAULT_DO_EXEC3_IMPLEMENTATION))
@@ -1611,7 +1611,7 @@
 #  endif
 #  if defined(HAS_NL_LANGINFO)
 #    if defined(PERL_IN_LOCALE_C)
-#define my_nl_langinfo		S_my_nl_langinfo
+#define my_nl_langinfo(a,b)	S_my_nl_langinfo(aTHX_ a,b)
 #    endif
 #  endif
 #  if defined(HAS_PIPE)

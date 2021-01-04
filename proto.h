@@ -4207,7 +4207,7 @@ PERL_CALLCONV const char*	Perl_langinfo(const int item);
 #endif
 #if !(defined(HAS_NL_LANGINFO))
 #  if defined(PERL_IN_LOCALE_C)
-STATIC const char*	S_my_nl_langinfo(const int item, bool toggle);
+STATIC const char*	S_my_nl_langinfo(pTHX_ const int item, const bool toggle);
 #define PERL_ARGS_ASSERT_MY_NL_LANGINFO
 #  endif
 #endif
@@ -4688,7 +4688,7 @@ PERL_CALLCONV I32	Perl_do_shmio(pTHX_ I32 optype, SV** mark, SV** sp);
 #endif
 #if defined(HAS_NL_LANGINFO)
 #  if defined(PERL_IN_LOCALE_C)
-STATIC const char*	S_my_nl_langinfo(const nl_item item, bool toggle);
+STATIC const char*	S_my_nl_langinfo(pTHX_ const nl_item item, const bool toggle);
 #define PERL_ARGS_ASSERT_MY_NL_LANGINFO
 #  endif
 #endif

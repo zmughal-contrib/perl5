@@ -151,11 +151,10 @@ Perl_call_clib_char_fcn_(int classnum, int character)
 
     LC_CTYPE_LOCK;
 
-    DEBUG_L(PerlIO_printf(Perl_debug_log, "%s:%d: finding if %x is member of %d in locale %s, ctype=%d\n"
+    DEBUG_Lv(PerlIO_printf(Perl_debug_log, "%s:%d: finding if %x is member of %d in locale %s, ctype=%d"
                       , __FILE__, __LINE__, character, classnum, setlocale(LC_CTYPE, NULL), IN_UTF8_CTYPE_LOCALE));
     retval = PL_clib_char_fcns[classnum](character);
-    DEBUG_L(PerlIO_printf(Perl_debug_log, "%s:%d: returning %d\n"
-                      , __FILE__, __LINE__, retval));
+    DEBUG_Lv(PerlIO_printf(Perl_debug_log, "; answer is %d\n", retval));
     LC_CTYPE_UNLOCK;
     return retval;
 }

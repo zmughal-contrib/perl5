@@ -77,6 +77,15 @@ langinfo(code)
 #  endif
                         break;
 
+                    case NOEXPR:  case NOSTR:
+                    case YESEXPR: case YESSTR:
+#  ifdef USE_LOCALE_MESSAGES
+                        category = LC_MESSAGES;
+#  else
+                        category = LC_CTYPE;
+#  endif
+                        break;
+
                     default:
 #  ifdef USE_LOCALE_TIME
                         category = LC_TIME;
