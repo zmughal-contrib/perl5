@@ -3215,9 +3215,9 @@ S	|const char*|switch_category_locale_to_template|const int switch_category|cons
 S	|void	|restore_switched_locale|const int category|NULLOK const char * const original_locale
 #  endif
 #  ifdef HAS_NL_LANGINFO
-ST	|const char*|my_nl_langinfo|const nl_item item|bool toggle
+S	|const char*|my_nl_langinfo|const nl_item item|const bool toggle
 #  else
-ST	|const char*|my_nl_langinfo|const int item|bool toggle
+S	|const char*|my_nl_langinfo|const int item|const bool toggle
 #  endif
 iTR	|const char *|save_to_buffer|NULLOK const char * string	\
 				    |NULLOK char **buf		\

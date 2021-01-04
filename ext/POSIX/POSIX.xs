@@ -2151,21 +2151,17 @@ localeconv()
         const char * save_global;
         const char * save_thread;
 #  endif
-        DECLARATION_FOR_LC_NUMERIC_MANIPULATION;
+        DECLARATION_FOR_LOCALECONV_LOCK;
 
         /* localeconv() deals with both LC_NUMERIC and LC_MONETARY, but
          * LC_MONETARY is already in the correct locale */
 #  ifdef USE_LOCALE_MONETARY
 
-        const bool is_monetary_utf8 = _is_cur_LC_category_utf8(LC_MONETARY);
+        bool is_monetary_utf8 = _is_cur_LC_category_utf8(LC_MONETARY);
 #  endif
 #  ifdef USE_LOCALE_NUMERIC
 
-        bool is_numeric_utf8;
-
-        STORE_LC_NUMERIC_FORCE_TO_UNDERLYING();
-
-        is_numeric_utf8 = _is_cur_LC_category_utf8(LC_NUMERIC);
+        bool is_numeric_utf8 = _is_cur_LC_category_utf8(LC_NUMERIC);
 #  endif
 
 	RETVAL = newHV();
@@ -2182,10 +2178,8 @@ localeconv()
 
         lcbuf = localeconv_l(cur);
 #  else
-        LC_MONETARY_LOCK;    /* Prevent interference with other threads using
+        LOCALECONV_LOCK;    /* Prevent interference with other threads using
                                localeconv() */
-        /* XXX */
-        LOCALE_BASE_LOCK_(0);    /* Prevent interference with other threads using */
 #    ifdef TS_W32_BROKEN_LOCALECONV
         /* This is a workaround for a Windows bug prior to VS 15, in which
          * localeconv only looks at the global locale.  We toggle to the global
@@ -2271,10 +2265,8 @@ localeconv()
         Safefree(save_global);
         Safefree(save_thread);
 #    endif
-        LOCALE_BASE_UNLOCK_;
-        LC_MONETARY_UNLOCK;
 #  endif
-        RESTORE_LC_NUMERIC();
+        LOCALECONV_UNLOCK;
 #endif  /* HAS_LOCALECONV */
     OUTPUT:
 	RETVAL
@@ -3384,7 +3376,9 @@ mblen(s, n = ~0)
                 char * string = SvPV(byte_s, len);
                 if (n < len) len = n;
 #ifdef USE_MBRLEN
+                MBRLEN_LOCK;
                 RETVAL = (SSize_t) mbrlen(string, len, &PL_mbrlen_ps);
+                MBRLEN_UNLOCK;
                 if (RETVAL < 0) RETVAL = -1;    /* Use mblen() ret code for
                                                    transparency */
 #else
@@ -3436,7 +3430,9 @@ mbtowc(pwc, s, n = ~0)
                 char * string = SvPV(byte_s, len);
                 if (n < len) len = n;
 #ifdef USE_MBRTOWC
+                MBRTOWC_LOCK;
                 RETVAL = (SSize_t) mbrtowc(&wc, string, len, &PL_mbrtowc_ps);
+                MBRTOWC_UNLOCK;
 #else
                 /* Locking prevents races, but locales can be switched out
                  * without locking, so this isn't a cure all */
@@ -3472,7 +3468,9 @@ wctomb(s, wchar)
 #ifdef USE_WCRTOMB
             /* The man pages khw looked at are in agreement that this works.
              * But probably memzero would too */
+            WCRTOMB_LOCK;
             RETVAL = wcrtomb(NULL, L'\0', &PL_wcrtomb_ps);
+            WCRTOMB_UNLOCK;
 #else
             WCTOMB_LOCK_;
             RETVAL = wctomb(NULL, L'\0');
@@ -3482,7 +3480,9 @@ wctomb(s, wchar)
         else {  /* Not resetting state */
             char buffer[MB_LEN_MAX];
 #ifdef USE_WCRTOMB
+            WCRTOMB_LOCK;
             RETVAL = wcrtomb(buffer, wchar, &PL_wcrtomb_ps);
+            WCRTOMB_UNLOCK;
 #else
             /* Locking prevents races, but locales can be switched out without
              * locking, so this isn't a cure all */
