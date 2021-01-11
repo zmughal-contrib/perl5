@@ -194,20 +194,21 @@ my @death =
 
  '/\g/' => 'Unterminated \g... pattern {#} m/\g{#}/',
  '/\g{1/' => 'Unterminated \g{...} pattern {#} m/\g{1{#}/',
+ '/(?<;x/' => 'Group name must start with a non-digit word character {#} m/(?<;{#}x/',
 
  'my $m = "\\\"; $m =~ $m', => 'Trailing \ in regex m/\/',
 
- '/\x{1/' => 'Missing right brace on \x{} {#} m/\x{1{#}/',
+ '/\x{ 1 /' => 'Missing right brace on \x{} {#} m/\x{ 1{#} /',
  '/\x{X/' => 'Missing right brace on \x{} {#} m/\x{{#}X/',
 
  '/[\x{X]/' => 'Missing right brace on \x{} {#} m/[\x{{#}X]/',
- '/[\x{A]/' => 'Missing right brace on \x{} {#} m/[\x{A{#}]/',
+ '/[\x{ A ]/' => 'Missing right brace on \x{} {#} m/[\x{ A{#} ]/',
 
- '/\o{1/' => 'Missing right brace on \o{} {#} m/\o{1{#}/',
- '/\o{X/' => 'Missing right brace on \o{} {#} m/\o{{#}X/',
+ '/\o{ 1 /' => 'Missing right brace on \o{} {#} m/\o{ 1{#} /',
+ '/\o{X/'   => 'Missing right brace on \o{} {#} m/\o{{#}X/',
 
  '/[\o{X]/' => 'Missing right brace on \o{} {#} m/[\o{{#}X]/',
- '/[\o{7]/' => 'Missing right brace on \o{} {#} m/[\o{7{#}]/',
+ '/[\o{ 7 ]/' => 'Missing right brace on \o{} {#} m/[\o{ 7{#} ]/',
 
  '/[[:barf:]]/' => 'POSIX class [:barf:] unknown {#} m/[[:barf:]{#}]/',
 
@@ -428,13 +429,10 @@ my @death_only_under_strict = (
                    => 'Unescaped left brace in regex is illegal here {#} m/\p{Latin}{{#}/',
     '/\x{100}\x/'  => "",
                    => "Empty \\x {#} m/\\x{100}\\x{#}/",
-    
-    '/.{, 4 }/'    => 'Unescaped left brace in regex is passed through {#} m/.{{#}, 4 }/',
-                   => 'Unescaped left brace in regex is illegal here {#} m/.{{#}, 4 }/',
-    '/[x]{, 4}/'   => 'Unescaped left brace in regex is passed through {#} m/[x]{{#}, 4}/',
-                   => 'Unescaped left brace in regex is illegal here {#} m/[x]{{#}, 4}/',
-    '/\p{Latin}{,4 }/' => 'Unescaped left brace in regex is passed through {#} m/\p{Latin}{{#},4 }/',
-                       => 'Unescaped left brace in regex is illegal here {#} m/\p{Latin}{{#},4 }/',
+    '/\o{ 1 20 }/' => 'Non-octal character \' \' terminates \o early.  Resolved as "\o{001}" {#} m/\o{ 1 20 }{#}/',
+                   => 'Non-octal character {#} m/\\o{ 1 {#}20 }/',
+    '/\x{ 5 0 }/'  => 'Non-hex character \' \' terminates \x early.  Resolved as "\x{05}" {#} m/\x{ 5 0 }{#}/',
+                   => 'Non-hex character {#} m/\\x{ 5 {#}0 }/',
 );
 
 # These need the character 'ネ' as a marker for mark_as_utf8()
