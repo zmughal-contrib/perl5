@@ -6891,11 +6891,11 @@ the plain locale pragma without a parameter (S<C<use locale>>) is in effect.
 #endif
 #if !defined(MBTOWC_LOCK_) && defined(HAS_MBTOWC)
 #  define MBTOWC_LOCK_          LOCALE_LOCK_ 
-#  define MBTOWC_UNLOCK_        LOCALE_UNLOCK
+#  define MBTOWC_UNLOCK_        LOCALE_UNLOCK_
 #endif
 #if !defined(WCTOMB_LOCK_) && defined(HAS_WCTOMB)
-#  define WCTOMB_LOCK_          LOCALE_LOCK
-#  define WCTOMB_UNLOCK_        LOCALE_UNLOCK
+#  define WCTOMB_LOCK_          LOCALE_LOCK_
+#  define WCTOMB_UNLOCK_        LOCALE_UNLOCK_
 #endif
 
 /* Whereas the reentrant versions don't */

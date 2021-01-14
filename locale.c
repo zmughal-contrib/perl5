@@ -2835,6 +2835,7 @@ S_my_nl_langinfo(pTHX_ const int item, bool toggle)
 #else   /* Below, emulate nl_langinfo as best we can */
 
     {
+        DECLARATION_FOR_LC_NUMERIC_MANIPULATION;
 
 #  ifdef HAS_LOCALECONV
 
@@ -5831,7 +5832,7 @@ Perl_thread_locale_init()
 
 #if defined(USE_ITHREADS) && defined(USE_LOCALE)
 
-    dTHX_DEBUGGING;
+    dTHX;
 
     DEBUG_L(PerlIO_printf(Perl_debug_log,
             "%s:%d: new thread, initial locale is %s\n",
