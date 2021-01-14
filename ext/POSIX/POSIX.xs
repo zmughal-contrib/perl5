@@ -2142,9 +2142,12 @@ localeconv()
 	localeconv(); /* A stub to call not_here(). */
 #else
 	struct lconv *lcbuf;
-#  if defined(USE_ITHREADS)                                             \
-   && defined(HAS_POSIX_2008_LOCALE)                                    \
-   && defined(HAS_LOCALECONV_L) /* Prefer this thread-safe version */
+#  if defined(USE_ITHREADS)                         \
+   && defined(HAS_POSIX_2008_LOCALE)                \
+   && defined(HAS_LOCALECONV_L)
+#    define USE_LOCALECONV_L /* Prefer this thread-safe version */
+#  endif
+#  ifdef USE_LOCALECONV_L
         bool do_free = FALSE;
         locale_t cur = NULL;
 #  elif defined(TS_W32_BROKEN_LOCALECONV)
@@ -2166,9 +2169,7 @@ localeconv()
 
 	RETVAL = newHV();
 	sv_2mortal((SV*)RETVAL);
-#  if defined(USE_ITHREADS)                         \
-   && defined(HAS_POSIX_2008_LOCALE)                \
-   && defined(HAS_LOCALECONV_L)
+#  ifdef USE_LOCALECONV_L
 
         cur = uselocale((locale_t) 0);
         if (cur == LC_GLOBAL_LOCALE) {
@@ -2247,9 +2248,7 @@ localeconv()
                 integers++;
             }
 	}
-#  if defined(USE_ITHREADS)                         \
-   && defined(HAS_POSIX_2008_LOCALE)                \
-   && defined(HAS_LOCALECONV_L)
+#  ifdef USE_LOCALECONV_L
         if (do_free) {
             freelocale(cur);
         }
@@ -2265,8 +2264,8 @@ localeconv()
         Safefree(save_global);
         Safefree(save_thread);
 #    endif
-#  endif
         LOCALECONV_UNLOCK;
+#  endif
 #endif  /* HAS_LOCALECONV */
     OUTPUT:
 	RETVAL

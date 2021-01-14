@@ -1507,6 +1507,31 @@
 #  if !(defined(PERL_USE_3ARG_SIGHANDLER))
 #define sighandler		Perl_sighandler
 #  endif
+#  if !(defined(USE_QUERYLOCALE))
+#    if !(defined(WIN32))
+#      if defined(PERL_IN_LOCALE_C)
+#        if defined(USE_POSIX_2008_LOCALE)
+#define calculate_LC_ALL(a)	S_calculate_LC_ALL(aTHX_ a)
+#define find_locale_from_environment(a)	S_find_locale_from_environment(aTHX_ a)
+#define setlocale_from_aggregate_LC_ALL(a)	S_setlocale_from_aggregate_LC_ALL(aTHX_ a)
+#        endif
+#      endif
+#    endif
+#  endif
+#  if !(defined(WIN32))
+#    if defined(PERL_IN_LOCALE_C)
+#      if defined(USE_POSIX_2008_LOCALE)
+#define emulate_setlocale	S_emulate_setlocale
+#define my_querylocale		S_my_querylocale
+#        if defined(USE_QUERYLOCALE)
+#define calculate_LC_ALL(a)	S_calculate_LC_ALL(aTHX_ a)
+#        endif
+#      endif
+#      if defined(USE_POSIX_2008_LOCALE)				     || defined(USE_THREAD_SAFE_LOCALE_EMULATION)
+#define query_PL_curlocales(a)	S_query_PL_curlocales(aTHX_ a)
+#      endif
+#    endif
+#  endif
 #  if !(defined(_MSC_VER))
 #define magic_regdatum_set(a,b)	Perl_magic_regdatum_set(aTHX_ a,b)
 #  endif
@@ -1516,18 +1541,6 @@
 #  if !defined(HAS_MKDIR) || !defined(HAS_RMDIR)
 #    if defined(PERL_IN_PP_SYS_C)
 #define dooneliner(a,b)		S_dooneliner(aTHX_ a,b)
-#    endif
-#  endif
-#  if !defined(HAS_QUERY_LOCALE)
-#    if defined(PERL_IN_LOCALE_C)
-#      if defined(USE_LOCALE)
-#        if defined(USE_POSIX_2008_LOCALE)
-#define calculate_LC_ALL(a)	S_calculate_LC_ALL(aTHX_ a)
-#define find_locale_from_environment(a)	S_find_locale_from_environment(aTHX_ a)
-#define query_PL_curlocales	S_query_PL_curlocales
-#define setlocale_from_aggregate_LC_ALL(a)	S_setlocale_from_aggregate_LC_ALL(aTHX_ a)
-#        endif
-#      endif
 #    endif
 #  endif
 #  if !defined(HAS_RENAME)
@@ -1581,11 +1594,9 @@
 #define get_debug_opts(a,b)	Perl_get_debug_opts(aTHX_ a,b)
 #define set_padlist		Perl_set_padlist
 #    if defined(PERL_IN_LOCALE_C)
-#      if defined(USE_LOCALE)
 #define print_bytes_for_locale(a,b,c)	S_print_bytes_for_locale(aTHX_ a,b,c)
 #define print_collxfrm_input_and_return(a,b,c,d)	S_print_collxfrm_input_and_return(aTHX_ a,b,c,d)
 #define setlocale_debug_string	S_setlocale_debug_string
-#      endif
 #    endif
 #    if defined(PERL_IN_PAD_C)
 #define cv_dump(a,b)		S_cv_dump(aTHX_ a,b)
@@ -1716,13 +1727,9 @@
 #define set_numeric_radix(a)	S_set_numeric_radix(aTHX_ a)
 #define stdize_locale(a)	S_stdize_locale(aTHX_ a)
 #define switch_category_locale_to_template(a,b,c)	S_switch_category_locale_to_template(aTHX_ a,b,c)
-#      if defined(USE_POSIX_2008_LOCALE)
-#define do_querylocale		S_do_querylocale
-#define emulate_setlocale	S_emulate_setlocale
-#      endif
-#      if defined(WIN32)
+#    endif
+#    if defined(WIN32)
 #define win32_setlocale(a,b)	S_win32_setlocale(aTHX_ a,b)
-#      endif
 #    endif
 #  endif
 #  if defined(PERL_IN_LOCALE_C) || defined(PERL_IN_SV_C) || defined(PERL_IN_MATHOMS_C)

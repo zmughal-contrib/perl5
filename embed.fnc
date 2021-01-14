@@ -3213,6 +3213,12 @@ ST	|const char*|category_name |const int category
 ST	|unsigned int|get_category_index|const int category|NULLOK const char * locale
 S	|const char*|switch_category_locale_to_template|const int switch_category|const int template_category|NULLOK const char * template_locale
 S	|void	|restore_switched_locale|const int category|NULLOK const char * const original_locale
+S	|char*	|stdize_locale	|NN char* locs
+S	|void	|new_collate	|NULLOK const char* newcoll
+S	|void	|new_ctype	|NN const char* newctype
+S	|void	|set_numeric_radix|const bool use_locale
+S	|void	|new_numeric	|NULLOK const char* newnum
+S	|void	|new_LC_ALL	|NULLOK const char* newnum
 #  endif
 #  ifdef HAS_NL_LANGINFO
 S	|const char*|my_nl_langinfo|const nl_item item|const bool toggle
@@ -3223,29 +3229,29 @@ iTR	|const char *|save_to_buffer|NULLOK const char * string	\
 				    |NULLOK char **buf		\
 				    |NN Size_t *buf_size	\
 				    |const Size_t offset
-#  if defined(USE_LOCALE)
-S	|char*	|stdize_locale	|NN char* locs
-S	|void	|new_collate	|NULLOK const char* newcoll
-S	|void	|new_ctype	|NN const char* newctype
-S	|void	|set_numeric_radix|const bool use_locale
-S	|void	|new_numeric	|NULLOK const char* newnum
-S	|void	|new_LC_ALL	|NULLOK const char* newnum
+#  ifdef WIN32
+S	|char*	|win32_setlocale|int category|NULLOK const char* locale
+#  else
+#    if defined(USE_POSIX_2008_LOCALE)				\
+     || defined(USE_THREAD_SAFE_LOCALE_EMULATION)
+S	|const char *|query_PL_curlocales|const unsigned int index
+#    endif
 #    ifdef USE_POSIX_2008_LOCALE
 ST	|const char*|emulate_setlocale|const unsigned int index		\
 				    |NN const char* locale		\
 				    |const bool recalc_LC_ALL
-ST	|const char*|do_querylocale |const unsigned int index
-#      ifndef HAS_QUERY_LOCALE
-ST	|const char *|query_PL_curlocales|const unsigned int index
+ST	|const char*|my_querylocale |const unsigned int index		\
+				    |const locale_t cur_obj
+#      ifdef USE_QUERYLOCALE
+S	|const char *|calculate_LC_ALL|const locale_t cur_obj
+#      else
 S	|const char *|calculate_LC_ALL|NN const char ** individ_locales
 S	|const char *|setlocale_from_aggregate_LC_ALL|NN const char * locale
 S	|const char *|find_locale_from_environment|const unsigned int index
 #      endif
 #    endif
-#    ifdef WIN32
-S	|char*	|win32_setlocale|int category|NULLOK const char* locale
-#    endif
-#    ifdef DEBUGGING
+#  endif
+#  ifdef DEBUGGING
 S	|void	|print_collxfrm_input_and_return		\
 			    |NN const char * const s		\
 			    |NN const char * const e		\
@@ -3257,7 +3263,6 @@ S	|void	|print_bytes_for_locale	|NN const char * const s	\
 STR	|char *	|setlocale_debug_string	|const int category		    \
 					|NULLOK const char* const locale    \
 					|NULLOK const char* const retval
-#    endif
 #  endif
 #endif
 
@@ -3280,13 +3285,13 @@ CpiRT	|int	|call_clib_char_fcn_|const int classnum|const int character
 S	|SV*	|mess_alloc
 S	|SV *	|with_queued_errors|NN SV *ex
 S	|bool	|invoke_exception_hook|NULLOK SV *ex|bool warn
-#if defined(PERL_MEM_LOG) && !defined(PERL_MEM_LOG_NOIMPL)
+#  if defined(PERL_MEM_LOG) && !defined(PERL_MEM_LOG_NOIMPL)
 ST	|void	|mem_log_common	|enum mem_log_type mlt|const UV n|const UV typesize \
 				|NN const char *type_name|NULLOK const SV *sv \
 				|Malloc_t oldalloc|Malloc_t newalloc \
 				|NN const char *filename|const int linenumber \
 				|NN const char *funcname
-#endif
+#  endif
 #endif
 
 #if defined(PERL_MEM_LOG)
