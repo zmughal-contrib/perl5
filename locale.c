@@ -402,6 +402,7 @@ S_get_category_index(const int category, const char * locale)
 #  endif
     {
         if (category == categories[i]) {
+	    dTHX_DEBUGGING;
             DEBUG_Lv(PerlIO_printf(Perl_debug_log,
                      "%s:%d: index of category %d (%s) is %d\n",
                      __FILE__, __LINE__, category, category_names[i], i));

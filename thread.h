@@ -192,9 +192,9 @@
 #    define MUTEX_INIT(m) \
     STMT_START {						\
         int _eC_;						\
-        if ((_eC_ = pthread_mutex_init((m), pthread_mutexattr_default)))	\
-            Perl_croak_nocontext("panic: MUTEX_INIT (%d) [%s:%d]",	\
-                                 _eC_, __FILE__, __LINE__);	\
+        if ((_eC_ = pthread_mutex_init((m), pthread_mutexattr_default))) \
+            Perl_croak_nocontext("panic: MUTEX_INIT (%d) [%s:%d]", \
+                                 _eC_, __FILE__, __LINE__);     \
     } STMT_END
 #  endif
 
