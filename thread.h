@@ -184,9 +184,6 @@
     STMT_START {						\
 	int eC_;						\
 	Zero((m), 1, perl_mutex);                               \
-            PerlIO_printf(Perl_debug_log,                          \
-                               "%s: %d: starting =%p\n",          \
-                                __FILE__, __LINE__, &PL_locale_mutex);  \
  	if ((eC_ = pthread_mutex_init((m), pthread_mutexattr_default)))	\
 	    Perl_croak_nocontext("panic: MUTEX_INIT (%d) [%s:%d]",	\
 				 eC_, __FILE__, __LINE__);	\
@@ -195,10 +192,6 @@
 #    define MUTEX_INIT(m) \
     STMT_START {						\
 	int eC_;						\
-        /*dTHX;\
-            PerlIO_printf(Perl_debug_log,                          \
-                               "%s: %d: starting =%p\n",          \
-                                __FILE__, __LINE__, &PL_locale_mutex);  */\
 	if ((eC_ = pthread_mutex_init((m), pthread_mutexattr_default)))	\
 	    Perl_croak_nocontext("panic: MUTEX_INIT (%d) [%s:%d]",	\
 				 eC_, __FILE__, __LINE__);	\

@@ -117,6 +117,7 @@ S_init_tls_and_interp(PerlInterpreter *my_perl)
 void
 Perl_sys_init(int* argc, char*** argv)
 {
+	dTHX;
 
     PERL_ARGS_ASSERT_SYS_INIT;
 
@@ -128,6 +129,7 @@ Perl_sys_init(int* argc, char*** argv)
 void
 Perl_sys_init3(int* argc, char*** argv, char*** env)
 {
+	dTHX;
 
     PERL_ARGS_ASSERT_SYS_INIT3;
 
