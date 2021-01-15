@@ -3234,8 +3234,9 @@ S	|void	|new_LC_ALL	|NULLOK const char* newnum
 ST	|const char*|emulate_setlocale|const unsigned int index		\
 				    |NN const char* locale		\
 				    |const bool recalc_LC_ALL
-ST	|const char*|do_querylocale |const unsigned int index
-#      ifndef HAS_QUERY_LOCALE
+#      ifdef USE_QUERYLOCALE
+S	|const char*|my_querylocale |const unsigned int index
+#      else
 ST	|const char *|query_PL_curlocales|const unsigned int index
 S	|const char *|calculate_LC_ALL|NN const char ** individ_locales
 S	|const char *|setlocale_from_aggregate_LC_ALL|NN const char * locale

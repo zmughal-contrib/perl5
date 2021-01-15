@@ -4222,6 +4222,24 @@ PERL_CALLCONV Signal_t	Perl_csighandler(int sig);
 PERL_CALLCONV Signal_t	Perl_sighandler(int sig);
 #define PERL_ARGS_ASSERT_SIGHANDLER
 #endif
+#if !(defined(USE_QUERYLOCALE))
+#  if defined(PERL_IN_LOCALE_C)
+#    if defined(USE_LOCALE)
+#      if defined(USE_POSIX_2008_LOCALE)
+STATIC const char *	S_calculate_LC_ALL(pTHX_ const char ** individ_locales);
+#define PERL_ARGS_ASSERT_CALCULATE_LC_ALL	\
+	assert(individ_locales)
+STATIC const char *	S_find_locale_from_environment(pTHX_ const unsigned int index);
+#define PERL_ARGS_ASSERT_FIND_LOCALE_FROM_ENVIRONMENT
+STATIC const char *	S_query_PL_curlocales(const unsigned int index);
+#define PERL_ARGS_ASSERT_QUERY_PL_CURLOCALES
+STATIC const char *	S_setlocale_from_aggregate_LC_ALL(pTHX_ const char * locale);
+#define PERL_ARGS_ASSERT_SETLOCALE_FROM_AGGREGATE_LC_ALL	\
+	assert(locale)
+#      endif
+#    endif
+#  endif
+#endif
 #if !(defined(_MSC_VER))
 PERL_CALLCONV_NO_RET int	Perl_magic_regdatum_set(pTHX_ SV* sv, MAGIC* mg)
 			__attribute__noreturn__;
@@ -4260,24 +4278,6 @@ PERL_CALLCONV int	Perl_my_mkostemp(char *templte, int flags);
 PERL_CALLCONV int	Perl_my_mkstemp(char *templte);
 #define PERL_ARGS_ASSERT_MY_MKSTEMP	\
 	assert(templte)
-#endif
-#if !defined(HAS_QUERY_LOCALE)
-#  if defined(PERL_IN_LOCALE_C)
-#    if defined(USE_LOCALE)
-#      if defined(USE_POSIX_2008_LOCALE)
-STATIC const char *	S_calculate_LC_ALL(pTHX_ const char ** individ_locales);
-#define PERL_ARGS_ASSERT_CALCULATE_LC_ALL	\
-	assert(individ_locales)
-STATIC const char *	S_find_locale_from_environment(pTHX_ const unsigned int index);
-#define PERL_ARGS_ASSERT_FIND_LOCALE_FROM_ENVIRONMENT
-STATIC const char *	S_query_PL_curlocales(const unsigned int index);
-#define PERL_ARGS_ASSERT_QUERY_PL_CURLOCALES
-STATIC const char *	S_setlocale_from_aggregate_LC_ALL(pTHX_ const char * locale);
-#define PERL_ARGS_ASSERT_SETLOCALE_FROM_AGGREGATE_LC_ALL	\
-	assert(locale)
-#      endif
-#    endif
-#  endif
 #endif
 #if !defined(HAS_RENAME)
 PERL_CALLCONV I32	Perl_same_dirent(pTHX_ const char* a, const char* b);
@@ -5145,11 +5145,13 @@ STATIC char*	S_stdize_locale(pTHX_ char* locs);
 STATIC const char*	S_switch_category_locale_to_template(pTHX_ const int switch_category, const int template_category, const char * template_locale);
 #define PERL_ARGS_ASSERT_SWITCH_CATEGORY_LOCALE_TO_TEMPLATE
 #    if defined(USE_POSIX_2008_LOCALE)
-STATIC const char*	S_do_querylocale(const unsigned int index);
-#define PERL_ARGS_ASSERT_DO_QUERYLOCALE
 STATIC const char*	S_emulate_setlocale(const unsigned int index, const char* locale, const bool recalc_LC_ALL);
 #define PERL_ARGS_ASSERT_EMULATE_SETLOCALE	\
 	assert(locale)
+#      if defined(USE_QUERYLOCALE)
+STATIC const char*	S_my_querylocale(pTHX_ const unsigned int index);
+#define PERL_ARGS_ASSERT_MY_QUERYLOCALE
+#      endif
 #    endif
 #    if defined(WIN32)
 STATIC char*	S_win32_setlocale(pTHX_ int category, const char* locale);

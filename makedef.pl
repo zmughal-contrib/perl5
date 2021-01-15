@@ -142,6 +142,8 @@ if (! $define{NO_LOCALE}) {
 
 # https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B#Internal_version_numbering
 my $cctype = $ARGS{CCTYPE} =~ s/MSVC//r;
+#  if defined(USE_ITHREADS) && ! defined(NO_LOCALE_THREADS)
+#    define USE_LOCALE_THREADS
 if (! $define{HAS_SETLOCALE} && $define{HAS_POSIX_2008_LOCALE}) {
     $define{USE_POSIX_2008_LOCALE} = 1;
     $define{USE_THREAD_SAFE_LOCALE} = 1;

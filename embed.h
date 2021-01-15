@@ -1507,18 +1507,7 @@
 #  if !(defined(PERL_USE_3ARG_SIGHANDLER))
 #define sighandler		Perl_sighandler
 #  endif
-#  if !(defined(_MSC_VER))
-#define magic_regdatum_set(a,b)	Perl_magic_regdatum_set(aTHX_ a,b)
-#  endif
-#  if !defined(HAS_GETENV_LEN)
-#define getenv_len(a,b)		Perl_getenv_len(aTHX_ a,b)
-#  endif
-#  if !defined(HAS_MKDIR) || !defined(HAS_RMDIR)
-#    if defined(PERL_IN_PP_SYS_C)
-#define dooneliner(a,b)		S_dooneliner(aTHX_ a,b)
-#    endif
-#  endif
-#  if !defined(HAS_QUERY_LOCALE)
+#  if !(defined(USE_QUERYLOCALE))
 #    if defined(PERL_IN_LOCALE_C)
 #      if defined(USE_LOCALE)
 #        if defined(USE_POSIX_2008_LOCALE)
@@ -1528,6 +1517,17 @@
 #define setlocale_from_aggregate_LC_ALL(a)	S_setlocale_from_aggregate_LC_ALL(aTHX_ a)
 #        endif
 #      endif
+#    endif
+#  endif
+#  if !(defined(_MSC_VER))
+#define magic_regdatum_set(a,b)	Perl_magic_regdatum_set(aTHX_ a,b)
+#  endif
+#  if !defined(HAS_GETENV_LEN)
+#define getenv_len(a,b)		Perl_getenv_len(aTHX_ a,b)
+#  endif
+#  if !defined(HAS_MKDIR) || !defined(HAS_RMDIR)
+#    if defined(PERL_IN_PP_SYS_C)
+#define dooneliner(a,b)		S_dooneliner(aTHX_ a,b)
 #    endif
 #  endif
 #  if !defined(HAS_RENAME)
@@ -1717,8 +1717,10 @@
 #define stdize_locale(a)	S_stdize_locale(aTHX_ a)
 #define switch_category_locale_to_template(a,b,c)	S_switch_category_locale_to_template(aTHX_ a,b,c)
 #      if defined(USE_POSIX_2008_LOCALE)
-#define do_querylocale		S_do_querylocale
 #define emulate_setlocale	S_emulate_setlocale
+#        if defined(USE_QUERYLOCALE)
+#define my_querylocale(a)	S_my_querylocale(aTHX_ a)
+#        endif
 #      endif
 #      if defined(WIN32)
 #define win32_setlocale(a,b)	S_win32_setlocale(aTHX_ a,b)

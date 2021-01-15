@@ -1076,6 +1076,9 @@ Example usage:
 /* XXX The next few defines are unfortunately duplicated in makedef.pl, and
  * changes here MUST also be made there */
 
+#  if defined(USE_ITHREADS) && ! defined(NO_LOCALE_THREADS)
+#    define USE_LOCALE_THREADS
+#  endif
 #  if ! defined(HAS_SETLOCALE) && defined(HAS_POSIX_2008_LOCALE)
 #      define USE_POSIX_2008_LOCALE
 #      ifndef USE_THREAD_SAFE_LOCALE
@@ -1084,7 +1087,7 @@ Example usage:
                                    /* If compiled with
                                     * -DUSE_THREAD_SAFE_LOCALE, will do so even
                                     * on unthreaded builds */
-#  elif   (defined(USE_ITHREADS) || defined(USE_THREAD_SAFE_LOCALE))         \
+#  elif   (defined(USE_LOCALE_THREADS) || defined(USE_THREAD_SAFE_LOCALE))   \
        && (    defined(HAS_POSIX_2008_LOCALE)                                \
            || (defined(WIN32) && defined(_MSC_VER) && _MSC_VER >= 1400))     \
        && ! defined(NO_THREAD_SAFE_LOCALE)
@@ -1096,8 +1099,21 @@ Example usage:
 #    endif
 #  endif
 
-#  if   defined(USE_ITHREADS)                   \
-   && ! defined(USE_THREAD_SAFE_LOCALE)         \
+#  ifdef USE_POSIX_2008_LOCALE
+#    if    defined(HAS_QUERYLOCALE)                                         \
+        || (     defined(_NL_LOCALE_NAME)                                   \
+            &&   defined(HAS_THREAD_SAFE_NL_LANGINFO_L)                     \
+                  /* On systems that accept any locale name, the real       \
+                   * underlying locale is often returned by this internal   \
+                   * function, so we can't use it */                        \
+            && ! defined(SETLOCALE_ACCEPTS_ANY_LOCALE_NAME)                 \
+            && ! defined(NO_NL_LOCALE_NAME))
+#      define USE_QUERYLOCALE
+#    endif
+#  endif
+
+#  if   defined(USE_LOCALE_THREADS)                 \
+   && ! defined(USE_THREAD_SAFE_LOCALE)             \
    && ! defined(NO_THREAD_SAFE_LOCALE_EMULATION)
 #    define USE_THREAD_SAFE_LOCALE_EMULATION
 #  endif
@@ -6626,7 +6642,7 @@ the plain locale pragma without a parameter (S<C<use locale>>) is in effect.
 
 
 /* Locale/thread synchronization macros. */
-#if ! defined(USE_LOCALE) || ! defined(USE_ITHREADS)
+#if ! defined(USE_LOCALE) || ! defined(USE_LOCALE_THREADS)
 #  define LOCALE_BASE_LOCK_(cond)   NOOP
 #  define LOCALE_BASE_UNLOCK_       NOOP
 #  define LOCALE_LOCK_              NOOP
