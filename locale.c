@@ -840,15 +840,15 @@ S_do_querylocale(const unsigned int index)
      * threads using per-thread locales will just ignore those changes. */
 
     const int category = categories[index];
-    locale_t cur_obj = uselocale((locale_t) 0);
-    dTHX;
+    locale_t cur_obj = uselocale((locale_t) 0); /*Shouldn't this be passed */
+    dTHX;   /*XXX, also rename for confusion*/
 
     if (index > NOMINAL_LC_ALL_INDEX) { /* Out-of bounds */
         return NULL;
     }
 
-    DEBUG_Lv(PerlIO_printf(Perl_debug_log, "%s:%d: do_querylocale %p\n",
-                                           __FILE__, __LINE__, cur_obj));
+    DEBUG_Lv(PerlIO_printf(Perl_debug_log, "%s:%d: do_querylocale(%s) on %p\n",
+                           __FILE__, __LINE__, category_names[index], cur_obj));
     if (cur_obj == LC_GLOBAL_LOCALE) {
         const char * retval;
 
@@ -865,7 +865,15 @@ S_do_querylocale(const unsigned int index)
 
 #    ifdef HAS_QUERYLOCALE
 
-    return querylocale(category_masks[index], cur_obj);
+    { 
+        unsigned int i;
+        const char * official = querylocale(category_masks[index], cur_obj);
+        DEBUG_Lv(PerlIO_printf(Perl_debug_log, "%s:%d: querylocale returned %s\n",
+                                           __FILE__, __LINE__, official));
+        for (i = 0; i <= LC_ALL_INDEX; i++)
+            DEBUG_Lv(PerlIO_printf(Perl_debug_log, "%s:%d: querylocale returned %s\n",
+            const char * official = querylocale(category_masks[index], cur_obj);
+        
 
 #    else
 #      if   defined(_NL_LOCALE_NAME)                                        \
@@ -1468,7 +1476,7 @@ S_new_numeric(pTHX_ const char *newnum)
      * PL_numeric_underlying  A boolean indicating if the toggled state is such
      *                  that the current locale is the program's underlying
      *                  locale
-     * PL_numeric_standard An int indicating if the toggled state is such
+     * PL_numeric_standard  An int indicating if the toggled state is such
      *                  that the current locale is the C locale or
      *                  indistinguishable from the C locale.  If non-zero, it
      *                  is in C; if > 1, it means it may not be toggled away
@@ -2476,7 +2484,9 @@ Perl_setlocale(const int category, const char * locale)
 #    endif
 
     ) {
-        DEBUG_L(PerlIO_printf(Perl_debug_log, "%s:%d: underlying=%d\n", __FILE__, __LINE__, PL_numeric_underlying));
+        DEBUG_L(PerlIO_printf(Perl_debug_log,
+               "%s:%d: PL_numeric_underlying=%d; PL_numeric_standard=%d\n",
+               __FILE__, __LINE__, PL_numeric_underlying, PL_numeric_standard));
         SETLOCALE_UNLOCK;
         return retval;
     }
