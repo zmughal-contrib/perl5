@@ -5,6 +5,7 @@ use Carp;
 use File::Spec;
 use Getopt::Long;
 require "./Porting/manifest_lib.pl";
+use Data::Dumper;
 
 =head1 NAME
 
@@ -48,6 +49,7 @@ for (my $i=0; $i<= $#man_sections; $i+=2) {
     $man_sections_str .= "\t$man_sections[$i] => $man_sections[$j]\n";
 }
 my %man_sections_seen = map { $_ => 1 } @man_section_abbrevs;
+my $man_sections = { @man_sections };
 
 my ($stub, $abstract, $section, $verbose) = ('') x 4;
 GetOptions(
@@ -112,7 +114,56 @@ close($OUT) or croak "Can't close $manifest after writing";
 
 # Step 3: Add entry into pod/perl.pod
 
+=pod
 
+The committer will have to make a reasonable choice as to which section of
+F<pod/perl.pod> the new .pod file should be listed under.  For a first pass,
+let's put the new entry at the end of the C<^=head2> section specified by the
+committer with the single-initial provided for command-line switch C<section>.
+
+We'll have to read the existing F<pod/perl.pod> into memory, chunk it into before/during/after sections as we did with F<MANIFEST> above, then add the new entry at the end of the 'during' chunk.
+
+=cut
+
+my $perlpod = "./pod/perl.pod";
+
+open(my $IN1, '<', $perlpod)
+    or croak "Can't open $perlpod for reading";
+my $perlpod_str;
+{
+    local $/;
+    $perlpod_str = <$IN1>;
+}
+close($IN1) or croak "Can't close $perlpod after reading";
+
+my $section_head = "=head2 $man_sections->{$section}\n";
+my @chunks = split $section_head, $perlpod_str;
+
+my @subchunks = ();
+my @balance = split /\n/, $chunks[1];
+my (@target_section, @after_section);
+
+my $this = 0;
+for my $l (@balance) {
+    if ($l =~ m/^=(head2|for)/) {
+        push @after_section, $l;
+        $this++;
+    }
+    elsif (! $this) {
+        push @target_section, $l;
+    }
+    else {
+        push @after_section, $l;
+    }
+}
+
+open(my $OUT1, '>', $perlpod)
+    or croak "Can't open $perlpod for writing";
+print $OUT1 "$chunks[0]";
+print $OUT1 $section_head;
+print $OUT1 join("\n" => @target_section, "    $new_entry"), "\n\n";
+print $OUT1 join("\n" => @after_section), "\n";
+close $OUT1 or croak "Can't close $perlpod after writing";
 
 # Step 4: run './perl -Ilib Porting/pod_rules.pl --build-podmak' to update win32/pod.mak.
 
