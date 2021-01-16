@@ -1,11 +1,10 @@
 #!/usr/bin/perl
-use strict;
+use 5.14.0;
 use warnings;
 use Carp;
 use File::Spec;
 use Getopt::Long;
 require "./Porting/manifest_lib.pl";
-use Data::Dumper;
 
 =head1 NAME
 
@@ -15,19 +14,62 @@ add-pod-file - Utility to add new F<pod/*.pod> file to core distribution
 
 After C<make test_prep> has been run, call from top level of Perl 5 core distribution:
 
-   Porting/add-pod-file --stub=<XXX> --abstract=<YYY> --section=<Z>
+   Porting/add-pod-file --stub=<XXX> --abstract=<YYY> --section=<Z> --verbose
 
-=cut
+=head1 DESCRIPTION
 
-=pod
+This is a program which I<may> be helpful when a committer has to add a new F<*.pod> file in the F<pod/> directory.
 
-Overview
-Tutorials
-Reference Manual
-Internals and C Language Interface
-Miscellaneous
-Language-Specific
-Platform-Specific
+=head2 Prerequisites
+
+This program assumes that committer:
+
+=over 4
+
+=item * Has placed a well-formatted file into the F<pod/> directory.
+
+In the C<NAME> section of this file there is a single non-blank line which
+consists of a string in the format C<STUB - ABSTRACT>, where C<STUB> is the
+basename of the file without the C<.pod> suffix and C<ABSTRACT> is the short
+description of the file.  For example, a new file whose path is
+F<pod/perlphonypod.pod> must have a C<NAME> section like this:
+
+    =head1 NAME
+
+    perlphonypod - This is phony POD
+
+=item * Has run F<make test_prep>.
+
+This is to guarantee that all files are properly positioned.
+
+=back
+
+F<pod/*.pod> files need entries in multiple locations to keep F<make
+test_porting> happy.  This program automates the formulation of I<most> of
+those entries, but will need some assistance from the committer to work
+properly.  The committer will have to make a reasonable choice as to which
+section of F<pod/perl.pod> the new F<.pod> file should be listed under.
+The eligible sections are shown in the following table:
+
+    Command-Line Value      Section in pod/perl.pod
+
+         O               => 'Overview',
+         T               => 'Tutorials',
+         R               => 'Reference Manual',
+         I               => 'Internals and C Language Interface',
+         M               => 'Miscellaneous',
+         L               => 'Language-Specific',
+         P               => 'Platform-Specific',
+
+For a first pass, we'll put the new entry at the end of the C<^=head2> section
+specified by the committer with the single-initial provided for command-line
+switch C<section>.
+
+=head2 Testing this program
+
+To test this program create a well formatted F<.pod> file somewhere on your
+system, copy it into the source tree under F<pod>, then call the program as in
+L<USAGE> above.
 
 =cut
 
@@ -102,28 +144,23 @@ while (my $l = shift(@manifest_orig)) {
     }
 }
 
-print "Inserting entry for '$newpodpath' into MANIFEST; text will be '$abstract'\n" if $verbose;
+say "Inserting entry for '$newpodpath' into MANIFEST; text will be '$abstract'" if $verbose;
 my $new_entry = "$newpodpath\t\t$abstract";
 my @new_pod = sort_manifest(@pod, $new_entry);
 
 open(my $OUT, '>', $manifest)
     or croak "Can't open $manifest for writing";
 binmode($OUT);
-print($OUT join("\n", @before_pod, @new_pod, @after_pod), "\n");
+say $OUT join("\n", @before_pod, @new_pod, @after_pod);
 close($OUT) or croak "Can't close $manifest after writing";
 
-# Step 3: Add entry into pod/perl.pod
+# Step 3: Add entry to pod/perl.pod
 
-=pod
-
-The committer will have to make a reasonable choice as to which section of
-F<pod/perl.pod> the new .pod file should be listed under.  For a first pass,
-let's put the new entry at the end of the C<^=head2> section specified by the
-committer with the single-initial provided for command-line switch C<section>.
-
-We'll have to read the existing F<pod/perl.pod> into memory, chunk it into before/during/after sections as we did with F<MANIFEST> above, then add the new entry at the end of the 'during' chunk.
-
-=cut
+# Read the existing pod/perl.pod into memory.
+# Divide it into chunks before the selected section, the head2 of the selected
+# section, the selected section, and what comes after the selected section.
+# Add the stub and abstract for the new .pod file to the end of the selected
+# section.  (Manually reposition to taste.)
 
 my $perlpod = "./pod/perl.pod";
 
@@ -136,11 +173,12 @@ my $perlpod_str;
 }
 close($IN1) or croak "Can't close $perlpod after reading";
 
-my $section_head = "=head2 $man_sections->{$section}\n";
+my $section_head = "=head2 $man_sections->{$section}";
 my @chunks = split $section_head, $perlpod_str;
+chomp $chunks[0]; # So we can use 'say' consistently later on
 
-my @subchunks = ();
 my @balance = split /\n/, $chunks[1];
+shift @balance; # $chunks[1] begins with a newline which we won't need to output
 my (@target_section, @after_section);
 
 my $this = 0;
@@ -157,15 +195,17 @@ for my $l (@balance) {
     }
 }
 
+push @target_section, "    $new_entry";
+
 open(my $OUT1, '>', $perlpod)
     or croak "Can't open $perlpod for writing";
-print $OUT1 "$chunks[0]";
-print $OUT1 $section_head;
-print $OUT1 join("\n" => @target_section, "    $new_entry"), "\n\n";
-print $OUT1 join("\n" => @after_section), "\n";
+say $OUT1 $chunks[0];
+say $OUT1 $section_head;
+say $OUT1 join("\n" => @target_section), "\n";
+say $OUT1 join("\n" => @after_section), "\n";
 close $OUT1 or croak "Can't close $perlpod after writing";
 
 # Step 4: run './perl -Ilib Porting/pod_rules.pl --build-podmak' to update win32/pod.mak.
 
-print "Finished!\n" if $verbose;
+say "Finished!\n" if $verbose;
 
