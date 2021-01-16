@@ -85,11 +85,7 @@ my @manifest_orig = <$IN>;
 close($IN) or croak "Can't close $manifest after reading";
 chomp(@manifest_orig);
 
-#my %seen= ( '' => 1 ); # filter out blank lines
-#my @sorted = grep { !$seen{$_}++ } sort_manifest(@manifest_orig);
-##if ($verbose) { print "XXX: $_\n" for @sorted; }
-
-my (@before_pod, @pod, @after_pod, @new_manifest);
+my (@before_pod, @pod, @after_pod);
 my $seen_pod = 0;
 while (my $l = shift(@manifest_orig)) {
     if (! $seen_pod and $l !~ m{^pod\/}) {
@@ -104,20 +100,9 @@ while (my $l = shift(@manifest_orig)) {
     }
 }
 
-=pod
-
-PROBLEM: MANIFEST is not (at least currently) sorted in the way returned by 'sort'.
-Hence, using @sorted as the basis for inserting a new entry into MANIFEST leads to 
-an enormous 'git diff -- MANIFEST'.
-
-The most we want to do is to get the new entry into that section of MANIFEST whose
-lines match '^pod\/'.
-
-=cut
-
 print "Inserting entry for '$newpodpath' into MANIFEST; text will be '$abstract'\n" if $verbose;
 my $new_entry = "$newpodpath\t\t$abstract";
-my @new_pod = sort (@pod, $new_entry);
+my @new_pod = sort_manifest(@pod, $new_entry);
 
 open(my $OUT, '>', $manifest)
     or croak "Can't open $manifest for writing";
