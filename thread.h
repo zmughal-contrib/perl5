@@ -217,7 +217,7 @@
 #  define MUTEX_UNLOCK(m) \
     STMT_START {						\
         int _eC_;						\
-        if ((_eC_ = perl_pthread_mutex_unlock((m))))			\
+        if ((_eC_ = perl_pthread_mutex_unlock((m)))) {          \
             Perl_croak_nocontext(                               \
                             "panic: MUTEX_UNLOCK (%d) [%s:%d]", \
                                  _eC_, __FILE__, __LINE__);	\
@@ -227,7 +227,7 @@
 #  define MUTEX_DESTROY(m) \
     STMT_START {						\
         int _eC_;						\
-        if ((_eC_ = pthread_mutex_destroy((m))))		\
+        if ((_eC_ = pthread_mutex_destroy((m)))) {              \
             Perl_croak_nocontext("panic: MUTEX_DESTROY (%d) [%s:%d]",	\
                                  _eC_, __FILE__, __LINE__);	\
         }\

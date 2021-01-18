@@ -3234,7 +3234,7 @@ S	|char*	|win32_setlocale|int category|NULLOK const char* locale
 #  else
 #    if defined(USE_POSIX_2008_LOCALE)				\
      || defined(USE_THREAD_SAFE_LOCALE_EMULATION)
-S	|const char *|query_PL_curlocales|const unsigned int index
+ST	|const char *|query_PL_curlocales|const unsigned int index
 #    endif
 #    ifdef USE_POSIX_2008_LOCALE
 ST	|const char*|emulate_setlocale|const unsigned int index		\

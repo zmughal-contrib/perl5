@@ -2164,7 +2164,9 @@ localeconv()
 #  endif
 #  ifdef USE_LOCALE_NUMERIC
 
-        bool is_numeric_utf8 = _is_cur_LC_category_utf8(LC_NUMERIC);
+        bool is_numeric_utf8;
+        STORE_LC_NUMERIC_FORCE_TO_UNDERLYING();
+        is_numeric_utf8 = _is_cur_LC_category_utf8(LC_NUMERIC);
 #  endif
 
 	RETVAL = newHV();
@@ -2248,6 +2250,7 @@ localeconv()
                 integers++;
             }
 	}
+        RESTORE_LC_NUMERIC();
 #  ifdef USE_LOCALECONV_L
         if (do_free) {
             freelocale(cur);

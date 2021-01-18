@@ -123,8 +123,8 @@ PERL_STATIC_INLINE int
 Perl_iswordchar_(int c)
 {
     dTHX;
-    DEBUG_L(PerlIO_printf(Perl_debug_log, "%s:%d: finding if %x is an alnum in locale %s\n"
-                      , __FILE__, __LINE__, c, setlocale(LC_CTYPE, NULL)));
+    DEBUG_L(PerlIO_printf(Perl_debug_log, "%s:%d: is %x a \\w in locale %s = %d\n"
+                      , __FILE__, __LINE__, c, setlocale(LC_CTYPE, NULL), cBOOL(((c) == '_') || isalnum(c))));
     return UNLIKELY((c) == '_') || isalnum(c);
 }
 
@@ -2599,9 +2599,14 @@ Perl_foldEQ_locale(const char *s1, const char *s2, I32 len)
     assert(len >= 0);
 
     while (len--) {
-        if (*a != *b && *a != PL_fold_locale[*b])
-            return 0;
-        a++,b++;
+	if (*a != *b && *a != PL_fold_locale[*b]) {
+            DEBUG_L(PerlIO_printf(Perl_debug_log, "%s:%d: Our records indicate %02x is not a fold of %02x or its mate %02x\n"
+                      , __FILE__, __LINE__, *a, *b, PL_fold_locale[*b]));
+
+	    return 0;
+
+        }
+	a++,b++;
     }
     return 1;
 }

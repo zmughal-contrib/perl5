@@ -4252,7 +4252,7 @@ STATIC const char *	S_calculate_LC_ALL(pTHX_ const locale_t cur_obj);
 #      endif
 #    endif
 #    if defined(USE_POSIX_2008_LOCALE)				     || defined(USE_THREAD_SAFE_LOCALE_EMULATION)
-STATIC const char *	S_query_PL_curlocales(pTHX_ const unsigned int index);
+STATIC const char *	S_query_PL_curlocales(const unsigned int index);
 #define PERL_ARGS_ASSERT_QUERY_PL_CURLOCALES
 #    endif
 #  endif

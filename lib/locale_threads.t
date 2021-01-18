@@ -20,7 +20,8 @@ BEGIN {
 use Time::HiRes qw(time usleep);
 
 my $thread_count = 5;
-my $iterations = 5000;
+my $iterations = 1;
+my $max_result_length = 10000;
 
 # reset the locale environment
 local @ENV{'LANG', (grep /^LC_/, keys %ENV)};
@@ -75,11 +76,11 @@ $Data::Dumper::Sortkeys=1;
 $Data::Dumper::Useqq = 1;
 $Data::Dumper::Deepcopy = 1;
 
-sub add_trials($$)
+sub add_trials($$;$)
 {
     my $category_name = shift;
     my $op = shift;
-    my $sub_category = shift;
+    my $locale_pattern = shift // "";
 
     my $category_number = eval "&POSIX::$category_name";
     die "$@" if $@;
@@ -87,6 +88,8 @@ sub add_trials($$)
     my %results;
     my %seen;
     foreach my $locale (sort C_first find_locales($category_name)) {
+        next if $locale_pattern && $locale !~ /$locale_pattern/;
+
         use locale;
         next unless setlocale($category_number, $locale);
 
@@ -94,6 +97,11 @@ sub add_trials($$)
         die "$category_name: '$op': $@" if $@;
         #$result = "" if $locale eq 'C' && ! defined $result;
         next unless defined $result;
+        if (length $result > $max_result_length) {
+            diag("For $locale, '$op', result is too long; skipped");
+            next;
+        }
+
         if ($seen{$result}++) {
             push $tests_prep{$category_name}{duplicate_results}{$op}->@*, [ $locale, $result ];
         }
@@ -165,9 +173,10 @@ join "|",  map { langinfo(\$_) }
 EOT
 
 my $case_insensitive_matching_test = <<'EOT';
-my $uc = quotemeta join "", map { CORE::uc chr } (0..255);
-my $fc = CORE::fc $uc;
-$uc =~ /^ $fc $ /xi;
+#use re qw(Debug ALL);
+my $uc = join "", map { CORE::uc chr } (0..255);
+my $fc = quotemeta CORE::fc $uc;
+$uc =~ / \A $fc \z /xi;
 EOT
 
 foreach my $category (valid_locale_categories()) {
@@ -180,7 +189,11 @@ foreach my $category (valid_locale_categories()) {
 
     if ($category eq 'LC_COLLATE') {
         add_trials('LC_COLLATE', 'quotemeta join "", sort reverse map { chr } (1..255)');
-        #add_trials('LC_COLLATE', 'my $string = quotemeta join "", map { chr } (1..255); POSIX::strcoll($string)');
+        #use re qw(Debug ALL);
+        my $english = qr/ ^ en_ /x;
+        no re;
+        add_trials('LC_COLLATE', '"a" lt "B"', $english);
+        add_trials('LC_COLLATE', 'my $a = "a"; my $b = "B"; POSIX::strcoll($a, $b) < 0;', $english);
         add_trials('LC_COLLATE', 'my $string = quotemeta join "", map { chr } (1..255); POSIX::strxfrm($string)');
         next;
     }
@@ -240,7 +253,7 @@ foreach my $category (valid_locale_categories()) {
 }
 
 #print STDERR __FILE__, __LINE__, ": ", Dumper \%tests_prep;
-#__END__
+#_END__
 
 my @tests;
 for my $i (1 .. $thread_count) {
@@ -351,6 +364,7 @@ my $starting_time = sprintf "%.16e", (time() + 1) * 1_000_000;
                 use locale;
 
                 for my \$iteration (1..$iterations) {
+	    	    my \$errors = 0;
                     for my \$category_name (sort keys \$thread_tests_ref->%*) {
                         foreach my \$test (\$thread_tests_ref->{\$category_name}{locale_tests}->@*) {
                             my \$expected = \$test->{expected};
@@ -360,6 +374,7 @@ my $starting_time = sprintf "%.16e", (time() + 1) * 1_000_000;
                             }
                             else {
                                 \$|=1;
+				\$errors++;
                                 my \$locale
                                         = \$thread_tests_ref->{\$category_name}
                                                               {locale_name};
@@ -392,10 +407,11 @@ my $starting_time = sprintf "%.16e", (time() + 1) * 1_000_000;
                                 }
                                 print STDERR \":\\n\";
                                 Dump \$got;
-                                return 0;
                             }
                         }
                     }
+
+		    return 0 if \$errors;
                 }
 
                 return 1;

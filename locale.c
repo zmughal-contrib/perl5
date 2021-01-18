@@ -1655,6 +1655,7 @@ S_new_ctype(pTHX_ const char *newctype)
     bool maybe_utf8_turkic = FALSE;
 
     PERL_ARGS_ASSERT_NEW_CTYPE;
+    DEBUG_L(PerlIO_printf(Perl_debug_log, "%s: %d: Entering S_new_ctype(%s), is utf8=%d\n", __FILE__, __LINE__, newctype, PL_in_utf8_CTYPE_locale));
 
     /* We will replace any bad locale warning with 1) nothing if the new one is
      * ok; or 2) a new warning for the bad new locale */
@@ -1665,6 +1666,7 @@ S_new_ctype(pTHX_ const char *newctype)
 
     PL_in_utf8_CTYPE_locale = _is_cur_LC_category_utf8(LC_CTYPE);
     PL_in_utf8_turkic_locale = FALSE;
+    DEBUG_L(PerlIO_printf(Perl_debug_log, "%s: %d: Entering S_new_ctype(%s), is utf8=%d\n", __FILE__, __LINE__, newctype, PL_in_utf8_CTYPE_locale));
 
     LC_CTYPE_LOCK;
 
@@ -1679,13 +1681,15 @@ S_new_ctype(pTHX_ const char *newctype)
 
 #if defined(HAS_TOWUPPER) && defined (HAS_TOWLOWER)
 
-        if (towupper('i') == 0x130 && towlower('I') == 0x131) {
+        if (towupper('i') == 0x130 && towlower('I') == 0x131)
 
 #else
 
-        if (toupper('i') == 'i' && tolower('I') == 'I') {
+        if (toupper('i') == 'i' && tolower('I') == 'I')
 
 #endif
+
+        {
             check_for_problems = TRUE;
             maybe_utf8_turkic = TRUE;
         }
@@ -1711,6 +1715,7 @@ S_new_ctype(pTHX_ const char *newctype)
                     PL_fold_locale[i] = (U8) toupper(i);
                 else
                     PL_fold_locale[i] = (U8) i;
+                DEBUG_L(PerlIO_printf(Perl_debug_log, "For %s, fold of %02x is %02x\n", newctype, i, PL_fold_locale[i]));
             }
 
             /* If checking for locale problems, see if the native ASCII-range
@@ -2474,30 +2479,19 @@ Perl_setlocale(const int category, const char * locale)
                                 &PL_setlocale_buf, &PL_setlocale_bufsize, 0);
 
 #  ifndef USE_THREAD_SAFE_LOCALE_EMULATION
+#    ifndef USE_LOCALE_NUMERIC
+#      define affects_LC_NUMERIC(cat) 0
+#    elif defined(LC_ALL)
+#      define affects_LC_NUMERIC(cat) (cat == LC_NUMERIC || cat == LC_ALL)
+#    else
+#      define affects_LC_NUMERIC(cat) (cat == LC_NUMERIC)
+#    endif
 
     /* If the new locale  is the same as the current one, nothing is actually
      * being changed, so do nothing. */
-    if (   strEQ(retval, locale)
-
-#    if defined(USE_LOCALE_NUMERIC)
-
-        /* But the new LC_NUMERIC locale could actually be changing the
-         * standard locale into the current underlying one, so must change that
-         * so that our records get updated. */
-        && (category != LC_NUMERIC || ! PL_numeric_underlying)
-
-#      if defined(LC_ALL)
-
-        /* And, if we are changing all categories, LC_NUMERIC may be getting
-         * changed as well, so if it isn't also already the new locale, we
-         * can't skip the change */
-        && (category != LC_ALL || strEQ(locale, PL_numeric_name))
-
-#      endif
-
-#    endif
-
-    ) {
+    if (      strEQ(retval, locale)
+        && (! affects_LC_NUMERIC(category) || strEQ(locale, PL_numeric_name)))
+    {
         DEBUG_L(PerlIO_printf(Perl_debug_log,
                "%s:%d: PL_numeric_underlying=%d; PL_numeric_standard=%d\n",
                __FILE__, __LINE__, PL_numeric_underlying, PL_numeric_standard));
@@ -4889,16 +4883,17 @@ Perl__is_cur_LC_category_utf8(pTHX_ int category)
     }
 
     /* Here we don't have stored the utf8ness for the input locale.  We have to
+     * with langinfo, we can dispense with the list and just do it, creating a locale if necessary instead of switching.
      * calculate it */
 
 #  if        defined(USE_LOCALE_CTYPE)                                  \
-     && (    defined(HAS_NL_LANGINFO)                                   \
+                                         /* our emulation of langinfo on windows will suffice */ \
+     && (   (defined(HAS_NL_LANGINFO) || defined(WIN32))                \
          || (defined(HAS_MBTOWC) || defined(HAS_MBRTOWC)))
 
     {
         const char *original_ctype_locale;
 
-        /* XXX this causes a recursive call via Perl_setlocale which can access freed memory */
         LC_CTYPE_LOCK;
         original_ctype_locale = switch_category_locale_to_template(LC_CTYPE,
                                                              category,
@@ -5731,6 +5726,7 @@ Perl_sync_locale()
      * locale setting, any plain setlocale() will have affected what we see, so
      * no need to worry.  Otherwise, If the foreign code has done a plain
      * setlocale(), it will only affect the global locale on POSIX systems, but
+     * Probably need to call update of newctype...
      * will affect the XXX */
     if (cur_obj == LC_GLOBAL_LOCALE) {
 
@@ -5875,6 +5871,7 @@ Perl_thread_locale_init()
     /* This thread starts off in the C locale */
     SETLOCALE_LOCK;
     do_setlocale_c(LC_ALL, "C");
+    new_LC_ALL("C");
     SETLOCALE_UNLOCK;
 
 #  endif

@@ -1528,7 +1528,7 @@
 #        endif
 #      endif
 #      if defined(USE_POSIX_2008_LOCALE)				     || defined(USE_THREAD_SAFE_LOCALE_EMULATION)
-#define query_PL_curlocales(a)	S_query_PL_curlocales(aTHX_ a)
+#define query_PL_curlocales	S_query_PL_curlocales
 #      endif
 #    endif
 #  endif

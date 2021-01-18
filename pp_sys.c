@@ -5514,7 +5514,9 @@ PP(pp_gpwent)
         /* Some AIX setups falsely(?) detect some getspnam(), which
          * has a different API than the Solaris/IRIX one. */
 #   if defined(HAS_GETSPNAM) && !defined(_AIX)
+        {
             const struct spwd * spwent;
+            dSAVE_ERRNO;
             GETSPNAM_LOCK;
             spwent = getspnam(pwent->pw_name);
                           /* Save and restore errno so that
